@@ -1,5 +1,5 @@
-=== P3 (Plugin Performance Profiler) ===
-Contributors: GoDaddy, StarfieldTech
+﻿=== P3 (Plugin Performance Profiler) ===
+Contributors: Godaddy, StarfieldTech
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 3.3
@@ -29,9 +29,19 @@ Requires Firefox, Chrome, Opera, Safari, or IE9 or later.
 8. Send a summary of your performance profile via e-mail.  If you want to show your developer, site admin, hosting support, or a plugin developer what's going on with your site, this is good way to start the conversation.
 
 == Installation ==
-Extract the zip file and just drop the contents in the wp-content/plugins/
-directory of your WordPress installation and then activate the Plugin from
-Plugins page.
+Automatic installation:
+1. Log into your WordPress admin
+2. Click *Plugins*
+3. Click *Add New*
+4. Search for *P3*
+5. Click *Install Now* under "P3 (Plugin Performance Profiler)"
+6. Activate the plugin
+
+Manual installation:
+1. Download the plugin
+2. Extract the contents of the zip file
+3. Upload the contents of the zip file to the wp-content/plugins/ folder of your WordPress installation
+4. Then activate the Plugin from Plugins page.
 
 == Frequently Asked Questions ==
 No FAQs yet.
