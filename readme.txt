@@ -3,7 +3,7 @@ Contributors: Godaddy, StarfieldTech
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 3.3
-Stable tag: 1.0
+Stable tag: 1.0.1
 
 See which plugins are slowing down your site.  This plugin creates a performance report for your site.
 
@@ -45,10 +45,16 @@ No FAQs yet.
 
 == Upgrade Notice ==
 
+= 1.0.1 =
+ * readme.txt updates
+
 = 1.0 =
-Initial release.
+ * Initial release
 
 == Changelog ==
+
+= 1.0.1 =
+ * readme.txt changes
 
 = 1.0 =
  * Automatic site profiling
