@@ -1,19 +1,14 @@
-=== P3 (Plugin Performance Profiler) ===
-Contributors: GoDaddy, StarfieldTech
+﻿=== P3 (Plugin Performance Profiler) ===
+Contributors: Godaddy, StarfieldTech
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 3.3
-Stable tag: 1.0
+Stable tag: 1.0.1
 
-See which plugins are slowing down your site.  This plugin creates a performance
-report for your site.
+See which plugins are slowing down your site.  This plugin creates a performance report for your site.
 
 == Description ==
-This plugin creates a profile of your WordPress site's plugins' performance by
-measuring their impact on your site's load time.  Often times, WordPress sites
-load slowly because of poorly configured plugins or because there are so many of
-them. By using the P3 plugin, you can narrow down anything causing slowness on
-your site.
+This plugin creates a profile of your WordPress site's plugins' performance by measuring their impact on your site's load time.  Often times, WordPress sites load slowly because of poorly configured plugins or because there are so many of them. By using the P3 plugin, you can narrow down anything causing slowness on your site.
 
 Requires Firefox, Chrome, Opera, Safari, or IE9 or later.
 
@@ -29,19 +24,37 @@ Requires Firefox, Chrome, Opera, Safari, or IE9 or later.
 8. Send a summary of your performance profile via e-mail.  If you want to show your developer, site admin, hosting support, or a plugin developer what's going on with your site, this is good way to start the conversation.
 
 == Installation ==
-Extract the zip file and just drop the contents in the wp-content/plugins/
-directory of your WordPress installation and then activate the Plugin from
-Plugins page.
+Automatic installation
+
+1. Log into your WordPress admin
+2. Click __Plugins__
+3. Click __Add New__
+4. Search for __P3__
+5. Click __Install Now__ under "P3 (Plugin Performance Profiler)"
+6. Activate the plugin
+
+Manual installation:
+
+1. Download the plugin
+2. Extract the contents of the zip file
+3. Upload the contents of the zip file to the wp-content/plugins/ folder of your WordPress installation
+4. Then activate the Plugin from Plugins page.
 
 == Frequently Asked Questions ==
 No FAQs yet.
 
 == Upgrade Notice ==
 
+= 1.0.1 =
+ * readme.txt updates
+
 = 1.0 =
-Initial release.
+ * Initial release
 
 == Changelog ==
+
+= 1.0.1 =
+ * readme.txt changes
 
 = 1.0 =
  * Automatic site profiling
