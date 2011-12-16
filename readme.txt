@@ -1,9 +1,9 @@
 ﻿=== P3 (Plugin Performance Profiler) ===
 Contributors: Godaddy, StarfieldTech
-Tags: admin, benchmark, benchmarking, debug, debugging, developer, development, performance, plugin, profiler, speed
+Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 3.3
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 
 See which plugins are slowing down your site.  This plugin creates a performance report for your site.
 
@@ -41,9 +41,16 @@ Manual installation:
 4. Then activate the Plugin from Plugins page.
 
 == Frequently Asked Questions ==
-No FAQs yet.
+
+= What if I get a warning about usort()? =
+
+Warning messages like this: `Warning: usort() [function.usort]: Array was modified by the user comparison function` are due to a known php bug.  See [php bug #50688](https://bugs.php.net/bug.php?id=50688) for more information.  This warning does not affect the functionality of your site and it is not visible to your users.
 
 == Changelog ==
+
+= 1.0.3 =
+ * Enforcing WordPress 3.3 requirement during activation
+ * Documented warning about usort() and php bug
 
 = 1.0.2 =
  * Fixed an error message when clicking "stop scan" too fast
