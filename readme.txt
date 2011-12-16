@@ -3,7 +3,7 @@ Contributors: Godaddy, StarfieldTech
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 3.3
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 
 See which plugins are slowing down your site.  This plugin creates a performance report for your site.
 
@@ -40,6 +40,11 @@ Manual installation:
 3. Upload the contents of the zip file to the wp-content/plugins/ folder of your WordPress installation
 4. Then activate the Plugin from Plugins page.
 
+== Upgrade Notice ==
+
+= 1.0.5 =
+This version addresses a path disclosure issue.  Users are encouraged to upgrade.
+
 == Frequently Asked Questions ==
 
 = What if I get a warning about usort()? =
@@ -47,6 +52,10 @@ Manual installation:
 Warning messages like this: `Warning: usort() [function.usort]: Array was modified by the user comparison function` are due to a known php bug.  See [php bug #50688](https://bugs.php.net/bug.php?id=50688) for more information.  This warning does not affect the functionality of your site and it is not visible to your users.
 
 == Changelog ==
+
+= 1.0.5 =
+ * Security - Fixed a path disclosure vulnerability
+ * Security - sanitized user input before it gets back to the browser
 
 = 1.0.4 =
  * Bugfix - uninstalling the plugin when it hasn't been activated can result in an error message

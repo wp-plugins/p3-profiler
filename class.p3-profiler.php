@@ -1,4 +1,7 @@
 <?php
+if ( basename( __FILE__ ) ==  basename( $_SERVER['SCRIPT_FILENAME'] ) )
+	die( 'Forbidden ');
+
 /**
  * Profiles a WordPress site
  *

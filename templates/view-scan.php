@@ -1,15 +1,17 @@
 <?php
-	$url_stats = array();
-	$domain    = '';
-	if ( !empty( $profile ) ) {
-		$url_stats = $profile->get_stats_by_url();
-		$domain    = @parse_url( $profile->report_url, PHP_URL_HOST );
-	}
-	$pie_chart_id                 = substr( md5( uniqid() ), -8 );
-	$runtime_chart_id             = substr( md5( uniqid() ), -8 );
-	$query_chart_id               = substr( md5( uniqid() ), -8 );
-	$component_breakdown_chart_id = substr( md5( uniqid() ), -8 );
-	$component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
+if ( !defined('P3_PATH') )
+	die( 'Forbidden ');
+$url_stats = array();
+$domain    = '';
+if ( !empty( $profile ) ) {
+	$url_stats = $profile->get_stats_by_url();
+	$domain    = @parse_url( $profile->report_url, PHP_URL_HOST );
+}
+$pie_chart_id                 = substr( md5( uniqid() ), -8 );
+$runtime_chart_id             = substr( md5( uniqid() ), -8 );
+$query_chart_id               = substr( md5( uniqid() ), -8 );
+$component_breakdown_chart_id = substr( md5( uniqid() ), -8 );
+$component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 ?>
 <script type="text/javascript">
 

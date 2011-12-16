@@ -1,4 +1,7 @@
 <?php
+if ( !defined('P3_PATH') )
+	die( 'Forbidden ');
+
 /**
  * Performance Profile Reader
  *

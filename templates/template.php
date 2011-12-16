@@ -1,4 +1,6 @@
 <?php
+if ( !defined('P3_PATH') )
+	die( 'Forbidden ');
 $p3_action = '';
 if ( !empty( $_REQUEST['p3_action'] ) ) {
 	$p3_action = $_REQUEST['p3_action'];
@@ -7,7 +9,7 @@ $scan = $this->get_latest_profile();
 if ( empty( $p3_action ) || 'current-scan' == $p3_action ) {
 	$p3_action = 'current-scan';
 } elseif ( 'view-scan' == $p3_action && !empty( $_REQUEST['name'] ) ) {
-	$scan = sanitize_file_name( $_REQUEST['name'] );
+	$scan = sanitize_file_name( basename( $_REQUEST['name'] ) );
 	if ( !file_exists( P3_PROFILES_PATH . "/$scan" ) ) {
 		wp_die( '<div id="message" class="error"><p>Scan does not exist</p></div>' );
 	}

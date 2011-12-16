@@ -1,4 +1,7 @@
 <?php
+if ( !defined('P3_PATH') )
+	die( 'Forbidden ');
+
 /**
  * Lists the performance profiles
  *
@@ -100,7 +103,7 @@ class P3_Profile_Table extends WP_List_Table {
 	 */
     public function column_title( $item ) {
         $actions = array(
-            'delete' => sprintf( '<a href="?page=%s&action=%s&name=%s">Delete</a>', $_REQUEST['name'], 'delete', $item['name'] ),
+            'delete' => sprintf( '<a href="?page=%s&action=%s&name=%s">Delete</a>', sanitize_text_field( $_REQUEST['name'] ), 'delete', $item['name'] ),
         );
 
         //Return the title contents

@@ -1,3 +1,7 @@
+<?php
+if ( !defined('P3_PATH') )
+	die( 'Forbidden ');
+?>
 <script type="text/javascript">
 	// Set up the tabs
 	jQuery( document ).ready( function( $) {
