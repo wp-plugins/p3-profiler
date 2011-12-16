@@ -49,7 +49,7 @@ Warning messages like this: `Warning: usort() [function.usort]: Array was modifi
 == Changelog ==
 
 = 1.0.4 =
- * Bugfix - uninstalling the plugin when it hasn't be activated can result in an error message
+ * Bugfix - uninstalling the plugin when it hasn't been activated can result in an error message
 
 = 1.0.3 =
  * Enforcing WordPress 3.3 requirement during activation
