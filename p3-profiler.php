@@ -4,7 +4,7 @@ Plugin Name: P3 (Plugin Performance Profiler)
 Plugin URI: http://support.godaddy.com/godaddy/wordpress-p3-plugin/
 Description: See which plugins are slowing down your site.  Create a profile of your WordPress site's plugins' performance by measuring their impact on your site's load time.
 Author: GoDaddy.com
-Version: 1.0.3
+Version: 1.0.4
 Author URI: http://www.godaddy.com/
 */
 
@@ -663,6 +663,8 @@ class P3_Profiler_Plugin {
 	 * @return void
 	 */
 	private function _delete_profiles_folder( $path ) {
+		if ( !file_exists( $path ) )
+			return;
 		$dir = opendir( $path );
 		while ( ( $file = readdir( $dir ) ) !== false ) {
 			if ( $file != '.' && $file != '..' ) {
