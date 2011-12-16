@@ -287,6 +287,17 @@
 </div>
 
 <div class="p3-question">
+	<h2 class="p3-help-question">What if I get a warning about usort()?</h2>
+	<blockquote>
+		Warning messages like this:
+		<code>Warning: usort() [function.usort]: Array was modified by the user comparison function</code> are due
+		to a known php bug.  See <a href="https://bugs.php.net/bug.php?id=50688" target="_blank">php bug #50688</a>
+		for more information.  This warning does not affect the functionality of your site and it is not visible
+		to your users.
+	</blockquote>
+</div>
+
+<div class="p3-question">
 	<h2 class="p3-help-question">My plugins don't seem to cause site slowness.  Why is my site still slow?</h2>
 	<blockquote>
 		Your site can be slow for a number of reasons. Your site could have a lot of traffic, other sites on
