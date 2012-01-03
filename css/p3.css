@@ -7,6 +7,15 @@
 }
 
 
+/** Scan label, far right of the nav buttons **/
+#p3-scan-label {
+	float: right;
+	font-weight: bold;
+	margin-top: 7px;
+	margin-right: 12px;
+}
+
+
 /** The grey box behind the big buttons **/
 #p3-scan-form-wrapper {
 	cursor: default;
@@ -16,6 +25,7 @@
 	text-align: center;
 	margin-top: 10px;
 }
+
 
 /** Big buttons **/
 .p3-big-button {
@@ -114,17 +124,17 @@ button.p3-cancel-button{
 /** Charts and graphs **/
 div.p3-plugin-graph {
 	margin: 10px auto 20px auto;
-	width: 620px;
+	width: 750px;
 	height: 320px;
 }
 div.p3-graph-holder {
-	width: 500px;
+	width: 550px;
 	height: 300px;
 	margin: auto;
 }
 div.p3-custom-legend {
 	float: left;
-	width: 120px;
+	width: 200px;
 	height: 280px;
 	overflow: auto;
 }
@@ -281,7 +291,7 @@ div.p3-y-axis-label {
 
 	position: relative;
 	top: 135px;
-	left: -20px;
+	left: 10px;
 
 	/* Safari */
 	-webkit-transform: rotate(-90deg);

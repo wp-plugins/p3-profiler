@@ -59,7 +59,7 @@ class P3_Profile_Table extends WP_List_Table {
         $total_items = count( $data );
 		
 		// Carve out only the visible dataset
-        $data        = array_slice( $data, $current_page - 1 * $per_page, $per_page );
+        $data        = array_slice( $data, ( $current_page - 1 ) * $per_page, $per_page );
         $this->items = $data;
 
 		// Set up the paginator
@@ -168,10 +168,11 @@ class P3_Profile_Table extends WP_List_Table {
 			array(
 				'p3_action' => 'view-scan',
 				'name' => $key,
+				'current_scan' => null,
 			)
 		);
 		return <<<EOD
-<a href="$url"><strong>$display</strong></a>
+<a href="$url" title="View the results of this scan"><strong>$display</strong></a>
 <div class="row-actions-visible">
 	<span class="view">
 		<a href="$url" data-name="$key" title="View the results of this scan" class="view-results">View</a> |

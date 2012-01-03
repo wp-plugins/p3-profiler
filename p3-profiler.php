@@ -4,7 +4,7 @@ Plugin Name: P3 (Plugin Performance Profiler)
 Plugin URI: http://support.godaddy.com/godaddy/wordpress-p3-plugin/
 Description: See which plugins are slowing down your site.  Create a profile of your WordPress site's plugins' performance by measuring their impact on your site's load time.
 Author: GoDaddy.com
-Version: 1.0.5
+Version: 1.1.0
 Author URI: http://www.godaddy.com/
 */
 
@@ -46,11 +46,15 @@ $p3_profiler_plugin = new P3_Profiler_Plugin();
 if ( is_admin() ) {
 	// Show the 'Profiler' option under the 'Plugins' menu
 	add_action( 'admin_menu', array( $p3_profiler_plugin, 'settings_menu' ) );
+	
+	// Upgrade routine
+	add_action( 'admin_init', array( $p3_profiler_plugin, 'upgrade' ) );
 
 	// Ajax actions
 	add_action( 'wp_ajax_p3_start_scan', array( $p3_profiler_plugin, 'ajax_start_scan' ) );
 	add_action( 'wp_ajax_p3_stop_scan', array( $p3_profiler_plugin, 'ajax_stop_scan' ) );
 	add_action( 'wp_ajax_p3_send_results', array( $p3_profiler_plugin, 'ajax_send_results' ) );
+	add_action( 'wp_ajax_p3_save_settings', array( $p3_profiler_plugin, 'ajax_save_settings' ) );
 
 	// Show any notices
 	add_action( 'admin_notices', array( $p3_profiler_plugin, 'show_notices' ) );
@@ -69,8 +73,8 @@ register_activation_hook( P3_PATH . DIRECTORY_SEPARATOR . 'p3-profiler.php', arr
 register_deactivation_hook( P3_PATH . DIRECTORY_SEPARATOR . 'p3-profiler.php', array( $p3_profiler_plugin, 'deactivate' ) );
 register_uninstall_hook( P3_PATH . DIRECTORY_SEPARATOR . 'p3-profiler.php', array( 'P3_Profiler_Plugin', 'uninstall' ) );
 if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-	add_action( 'wpmu_add_blog', array( $p3_profiler_plugin, 'sync_profiles_folder' ) );
-	add_action( 'wpmu_delete_blog', array( $p3_profiler_plugin, 'sync_profiles_folder' ) );
+	add_action( 'wpmu_add_blog', array( $p3_profiler_plugin, 'add_blog' ) );
+	add_action( 'wpmu_delete_blog', array( $p3_profiler_plugin, 'delete_blog' ) );
 }
 
 /**
@@ -95,7 +99,7 @@ class P3_Profiler_Plugin {
 	 * @return void
 	 */
 	public function remove_admin_bar() {
-		if ( !is_admin() ) {
+		if ( !is_admin() && is_user_logged_in() ) {
 			remove_action( 'wp_footer', 'wp_admin_bar_render', 1000 );
 			if ( true === force_ssl_admin() ) {
 				add_filter( 'site_url', array( $this, '_fix_url' ) );
@@ -156,6 +160,9 @@ class P3_Profiler_Plugin {
 		include_once P3_PATH . '/class.p3-profile-table-sorter.php';
 		include_once P3_PATH . '/class.p3-profile-table.php';
 		include_once P3_PATH . '/class.p3-profile-reader.php';
+		
+		// Load exceptions
+		include_once P3_PATH . '/exceptions/class.p3-profiler-no-data-exception.php';
 	}
 	
 	/**
@@ -346,7 +353,7 @@ class P3_Profiler_Plugin {
 
 		// Add the entry ( multisite installs can run more than one concurrent profile )
 		$json[] = array(
-			'ip'                   => $_POST['p3_ip'],
+			'ip'                   => stripslashes( $_POST['p3_ip'] ),
 			'disable_opcode_cache' => ( 'true' == $_POST['p3_disable_opcode_cache'] ),
 			'site_url'             => $site_url,
 			'name'                 => $filename,
@@ -418,6 +425,25 @@ class P3_Profiler_Plugin {
 		}
 	}
 
+	/**
+	 * Save advanced settings
+	 * @return void
+	 */
+	public function ajax_save_settings() {
+		
+		// Check nonce
+		if ( !wp_verify_nonce( $_POST ['p3_nonce'], 'p3_save_settings' ) ) {
+			wp_die( 'Invalid nonce' );
+		}
+
+		// Save the new options
+		update_option( 'p3-profiler_disable_opcode_cache', 'true' == $_POST['p3_disable_opcode_cache'] );
+		update_option( 'p3-profiler_use_current_ip', 'true' == $_POST['p3_use_current_ip'] );
+		update_option( 'p3-profiler_ip_address', $_POST['p3_ip_address'] );
+	
+		die( '1' );
+	}
+	
 
 	/**************************************************************/
 	/** EMAIL RESULTS                                            **/
@@ -530,7 +556,7 @@ class P3_Profiler_Plugin {
 		// Loop through the files, get the path and the last modified time
 		$files = array();
 		while ( false !== ( $file = readdir( $dir ) ) ) {
-			if ( '.json' == substr( $file, -5 ) ) {
+			if ( '.json' == substr( $file, -5 ) && filesize( P3_PROFILES_PATH . '/' . $file ) > 0 ) {
 				$files[filemtime( P3_PROFILES_PATH . "/$file" )] = P3_PROFILES_PATH . "/$file";
 			}
 		}
@@ -550,9 +576,10 @@ class P3_Profiler_Plugin {
 	 * Add a notices
 	 * @uses transients
 	 * @param string $notice
+	 * @param bool $error Default false.  If true, this is a red error.  If false, this is a yellow notice.
 	 * @return void
 	 */
-	public function add_notice( $notice ) {
+	public function add_notice( $notice, $error = false ) {
 
 		// Get any notices on the stack
 		$notices = get_transient( 'p3_notices' );
@@ -561,7 +588,10 @@ class P3_Profiler_Plugin {
 		}
 
 		// Add the notice to the stack
-		$notices[] = $notice;
+		$notices[] = array(
+			'msg'   => $notice,
+			'error' => $error,
+		);
 
 		// Save the stack
 		set_transient( 'p3_notices', $notices );
@@ -583,7 +613,7 @@ class P3_Profiler_Plugin {
 		if ( !empty( $notices ) ) {
 			$notices = array_unique( $notices );
 			foreach ( $notices as $notice ) {
-				echo '<div class="updated"><p>' . htmlentities( $notice ) . '</p></div>';
+				echo '<div class="' . ( ( $notice['error'] ) ? 'error' : 'updated' ) . '"><p>' . htmlentities( $notice['msg'] ) . '</p></div>';
 			}
 		}
 		set_transient( 'p3_notices', array() );
@@ -623,7 +653,7 @@ class P3_Profiler_Plugin {
 		// .htaccess for mod_php
 		if ( 'apache2handler' == $sapi ) {
 			insert_with_markers(
-				P3_PATH . '/../../../.htaccess',
+				ABSPATH . '/.htaccess',
 				'p3-profiler',
 				array( 'php_value auto_prepend_file "' . P3_PATH . DIRECTORY_SEPARATOR . 'start-profile.php"' )
 			);
@@ -631,19 +661,16 @@ class P3_Profiler_Plugin {
 
 		// Always try to create the mu-plugin loader in case either of the above methods fail
 
-		// mu-plugins doesn't exist
-		if ( !file_exists( P3_PATH . '/../../mu-plugins/' ) && is_writable( P3_PATH . '/../../' ) ) {
-			$flag = wp_mkdir_p( P3_PATH . '/../../mu-plugins/' );
+		// mu-plugins doesn't exist	
+		if ( !file_exists( WPMU_PLUGIN_DIR ) && is_writable( WPMU_PLUGIN_DIR . '/../' ) ) {
+			$flag = wp_mkdir_p( WPMU_PLUGIN_DIR );
 		}
-		if ( file_exists( P3_PATH . '/../../mu-plugins/' ) && is_writable( P3_PATH . '/../../mu-plugins' ) ) {
+		if ( file_exists( WPMU_PLUGIN_DIR ) && is_writable( WPMU_PLUGIN_DIR ) ) {
 			file_put_contents(
-				P3_PATH . '/../../mu-plugins/p3-profiler.php',
+				WPMU_PLUGIN_DIR . '/p3-profiler.php',
 				'<' . "?php // Start profiling\nrequire_once( realpath( dirname( __FILE__ ) ) . '/../plugins/p3-profiler/start-profile.php' ); ?" . '>'
 			);
 		}
-		
-		// Create the profiles folder
-		$this->sync_profiles_folder();
 	}
 
 	/**
@@ -681,73 +708,24 @@ class P3_Profiler_Plugin {
 
 	/**
 	 * Deactivation hook
-	 * Uninstall the profiler loader
+	 * Remove the profiler loader
 	 * @return void
 	 */
 	public function deactivate() {
 
 		// Remove any .htaccess modifications
-		$file = P3_PATH . '/../../../.htaccess';
+		$file = ABSPATH . '/.htaccess';
 		if ( file_exists( $file ) && array() !== extract_from_markers( $file, 'p3-profiler' ) ) {
 			insert_with_markers( $file, 'p3-profiler', array( '# removed during uninstall' ) );
 		}
 
 		// Remove mu-plugin
-		if ( file_exists( P3_PATH . '/../../mu-plugins/p3-profiler.php' ) ) {
-			if ( is_writable( P3_PATH . '/../../mu-plugins/p3-profiler.php' ) ) {
+		if ( file_exists( WPMU_PLUGIN_DIR . '/p3-profiler.php' ) ) {
+			if ( is_writable( WPMU_PLUGIN_DIR . '/p3-profiler.php' ) ) {
 				// Some servers give write permission, but not delete permission.  Empty the file out, first, then try to delete it.
-				file_put_contents( P3_PATH . '/../../mu-plugins/p3-profiler.php', '' );
-				unlink( P3_PATH . '/../../mu-plugins/p3-profiler.php' );
+				file_put_contents( WPMU_PLUGIN_DIR . '/p3-profiler.php', '' );
+				unlink( WPMU_PLUGIN_DIR . '/p3-profiler.php' );
 			}
-		}
-	}
-	
-	/**
-	 * Sync profiles folder
-	 * Call whenever a blog is added / removed
-	 * @return void
-	 */
-	public function sync_profiles_folder() {
-		
-		// Base blog profiles folder
-		$uploads_dir = wp_upload_dir();
-		$folder      = $uploads_dir['basedir'] . DIRECTORY_SEPARATOR . 'profiles';
-		$this->_make_profiles_folder( $folder );
-
-		// Only for multisite
-		if ( !function_exists( 'is_multisite' ) || !is_multisite() ) {
-			return;
-		}
-
-		// List profiles/<blog id> folders
-		$folders = array();
-		$dir     = opendir( $folder );
-		while ( ( $file = readdir( $dir ) ) !== false ) {
-			if ( $file != '.' && $file != '..' && is_dir( "$folder/$file" ) && is_numeric( $file ) ) {
-				$folders[] = $file;
-			}
-		}
-		closedir( $dir );
-
-		// List blogs
-		$blogs = array();
-		$blogs = get_blog_list( 0, 'all' );
-		foreach ( $blogs as $blog ) {
-			$blogs[] = $blog['blog_id'];
-		}
-
-		// Folders without a blog
-		foreach ( array_diff( $folders, $blogs ) as $id ) {
-			$this->_delete_profiles_folder( $folder . DIRECTORY_SEPARATOR . $id );
-		}
-		
-		// Blogs without a folder
-		foreach ( array_diff( $blogs, $folders ) as $id ) {
-			switch_to_blog( $id );
-			$uploads_dir = wp_upload_dir();
-			$folder      = $uploads_dir['basedir'] . DIRECTORY_SEPARATOR . 'profiles';
-			$this->_make_profiles_folder( $folder );
-			restore_current_blog();
 		}
 	}
 	
@@ -770,10 +748,22 @@ class P3_Profiler_Plugin {
 				$uploads_dir = wp_upload_dir();
 				$folder      = $uploads_dir['basedir'] . DIRECTORY_SEPARATOR . 'profiles' . DIRECTORY_SEPARATOR;
 				$me->_delete_profiles_folder( $folder );
+
+				// Remove any options
+				delete_option( 'p3-profiler_disable_opcode_cache' );
+				delete_option( 'p3-profiler_use_current_ip' );
+				delete_option( 'p3-profiler_ip_address' );
+				delete_option( 'p3-profiler_version' );
 			}
 			restore_current_blog();
 		} else {
 			$me->_delete_profiles_folder( P3_PROFILES_PATH );
+			
+			// Remove any options
+			delete_option( 'p3-profiler_disable_opcode_cache' );
+			delete_option( 'p3-profiler_use_current_ip' );
+			delete_option( 'p3-profiler_ip_address' );
+			delete_option( 'p3-profiler_version' );
 		}
 	}
 
@@ -810,5 +800,51 @@ class P3_Profiler_Plugin {
 		$pow   = min( $pow, count( $units ) - 1 );
 		$size /= pow( 1024, $pow );
 		return round( $size, 0 ) . ' ' . $units[$pow];
+	}
+	
+	/**
+	 * Actions to take when a multisite blog is added
+	 * @return void
+	 */
+	public function add_blog() {
+		// Reserved for future use
+	}
+	
+	/**
+	 * Actions to take when a multisite blog is removed
+	 * @return void
+	 */
+	public function delete_blog() {
+		$uploads_dir = wp_upload_dir();
+		$folder      = $uploads_dir['basedir'] . DIRECTORY_SEPARATOR . 'profiles' . DIRECTORY_SEPARATOR;
+		$this->_delete_profiles_folder( $folder );
+		delete_option( 'p3-profiler_disable_opcode_cache' );
+		delete_option( 'p3-profiler_use_current_ip' );
+		delete_option( 'p3-profiler_ip_address' );
+		delete_option( 'p3-profiler_version' );
+	}
+
+	/**
+	 * Upgrade
+	 * Check options, perform any necessary data conversions
+	 * @return void
+	 */
+	public function upgrade() {
+
+		// Get the current version
+		$version = get_option( 'p3-profiler_version' );
+		
+		// Upgrading from < 1.1.0
+		if ( empty( $version ) || version_compare( $version, '1.1.0') < 0 ) {
+			update_option( 'p3-profiler_disable_opcode_cache', true );
+			update_option( 'p3-profiler_use_current_ip', true );
+			update_option( 'p3-profiler_ip_address', '' );
+			update_option( 'p3-profiler_version', '1.1.0' );
+		}
+
+		// Ensure the profiles folder is there
+		$uploads_dir = wp_upload_dir();
+		$folder      = $uploads_dir['basedir'] . DIRECTORY_SEPARATOR . 'profiles';
+		$this->_make_profiles_folder( $folder );
 	}
 }

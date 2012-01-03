@@ -3,14 +3,14 @@ Contributors: Godaddy, StarfieldTech
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 3.3
-Stable tag: 1.0.5
+Stable tag: 1.1.0
 
 See which plugins are slowing down your site.  This plugin creates a performance report for your site.
 
 == Description ==
 This plugin creates a profile of your WordPress site's plugins' performance by measuring their impact on your site's load time.  Often times, WordPress sites load slowly because of poorly configured plugins or because there are so many of them. By using the P3 plugin, you can narrow down anything causing slowness on your site.
 
-Requires Firefox, Chrome, Opera, Safari, or IE9 or later.
+This plugin uses the canvas element for drawing charts and requires requires Firefox, Chrome, Opera, Safari, or IE9 or later.  Will not work in IE8 or lower.
 
 == Screenshots ==
 
@@ -42,6 +42,9 @@ Manual installation:
 
 == Upgrade Notice ==
 
+= 1.1.0 =
+Several usability enhancements and bugfixes.
+
 = 1.0.5 =
 This version addresses a path disclosure issue.  Users are encouraged to upgrade.
 
@@ -51,11 +54,34 @@ This version addresses a path disclosure issue.  Users are encouraged to upgrade
 
 Warning messages like this: `Warning: usort() [function.usort]: Array was modified by the user comparison function` are due to a known php bug.  See [php bug #50688](https://bugs.php.net/bug.php?id=50688) for more information.  This warning does not affect the functionality of your site and it is not visible to your users.
 
+= In the e-mail report, why is my theme detected as "unknown?" =
+
+Previous version of the plugin (before 1.1.0) did not have theme name detection support.  If you performed a scan with a previous version, then upgraded to 1.1.0+ to view the scan, the theme name will show as "unknown."
+
 == Changelog ==
+
+= 1.1.0 =
+ * Including plugin usage percentage / seconds in e-mail report
+ * Including theme name in e-mail report.  Profiles created in older versions will show "unknown"
+ * Grammar / wording changes
+ * Remembering "disable opcode cache" in options table
+ * New option for "use my IP."  If this is set, the current user's IP address will be used, if not, the stored IP pattern will be used
+ * IP patterns will be stored as an option
+ * Fixed:  IP patterns were incorrectly escaped
+ * Now displaying profile name in the top right
+ * If the profile didn't record any visits (e.g. wrong IP pattern) then an error will be displayed
+ * Fixing pagination on the history page
+ * Made the legends on the charts a bit wider for sites with a lot of plugins and plugins with long names
+ * Added the ability to toggle series on/off in the "detailed timeline" chart
+ * Removed network wide activation code - each site will be "activated" when the admin logs in
+ * Removed "sync all profile folders whenever a blog is added/deleted" code.  Profile folders will be added when admins log in, removed when blogs are removed
+ * When uninstalling, all profile folders and options will be removed
+ * Using get_plugin_data() to get plugin names.  If the plugin doesn't exist anymore, or there's a problem getting the plugin name, the old formatting code is used
 
 = 1.0.5 =
  * Security - Fixed a path disclosure vulnerability
  * Security - sanitized user input before it gets back to the browser
+ * Thanks to Julio Potier from [Boiteaweb.fr](http://www.boiteaweb.fr/)
 
 = 1.0.4 =
  * Bugfix - uninstalling the plugin when it hasn't been activated can result in an error message

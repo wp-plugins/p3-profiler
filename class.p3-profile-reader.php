@@ -105,6 +105,12 @@ if ( !defined('P3_PATH') )
 	public $plugin_times = array();
 
 	/**
+	 * Theme name, as determined from the file path
+	 * @var string
+	 */
+	public $theme_name = '';
+
+	/**
 	 * Averaged values for the report
 	 * @var array
 	 */
@@ -129,6 +135,12 @@ if ( !defined('P3_PATH') )
 	 * @var array
 	 */
 	private $_data = array();
+	
+	/**
+	 * Scan name, correlates to a file name, with .json stripped off
+	 * @var string
+	 */
+	public $profile_name = '';
 
 	/**
 	 * Constructor
@@ -161,6 +173,9 @@ if ( !defined('P3_PATH') )
 		// Close the file
 		fclose( $fp );
 		
+		// Set the profile name
+		$this->profile_name = preg_replace( '/\.json$/', '', basename ( $file ) );
+		
 		// Parse the data
 		$this->_parse();
 	}
@@ -170,6 +185,12 @@ if ( !defined('P3_PATH') )
 	 * @return void
 	 */
 	private function _parse() {
+
+		// Check for empty data
+		if ( empty( $this->_data ) ) {
+			throw new P3_Profile_No_Data_Exception('No visits in this profile.  Check the IP address you\'re scanning from.');
+		}
+		
 		foreach ( $this->_data as $o ) {
 			// Set report meta-data
 			if ( empty( $this->report_date ) ) {
@@ -205,7 +226,7 @@ if ( !defined('P3_PATH') )
 		$tmp                = $this->plugin_times;
 		$this->plugin_times = array();
 		foreach ( $tmp as $k => $v ) {
-			$k = ucwords( str_replace( array( '-', '_' ), ' ', $k ) );
+			$k = $this->_get_plugin_name( $k );
 			$this->plugin_times[$k] = $v / $this->visits;
 		}
 
@@ -215,6 +236,15 @@ if ( !defined('P3_PATH') )
 
 		// Calculate the averages
 		$this->_get_averages();
+		
+		// Get theme name
+		if ( property_exists( $this->_data[0], 'theme_name') ) {
+			$this->theme_name = str_replace( realpath( WP_CONTENT_DIR . '/themes/' ), '', realpath( $this->_data[0]->theme_name ) );
+			$this->theme_name = preg_replace('|^[\\\/]+([^\\\/]+)[\\\/]+.*|', '$1', $this->theme_name);
+			$this->theme_name = $this->_get_theme_name( $this->theme_name );
+		} else {
+			$this->theme_name = 'unknown';
+		}
 	}
 
 	/**
@@ -261,7 +291,7 @@ if ( !defined('P3_PATH') )
 				'breakdown' => array()
 			);
 			foreach ( $o->runtime->breakdown as $k => $v ) {
-				$name = ucwords( str_replace( array( '-', '_' ), ' ', $k ) );
+				$name = $this->_get_plugin_name( $k );
 				if ( !array_key_exists( $name, $tmp['breakdown'] ) ) {
 					$tmp['breakdown'][$name] = 0;
 				}
@@ -270,5 +300,58 @@ if ( !defined('P3_PATH') )
 			$ret[] = $tmp;
 		}
 		return $ret;
+	}
+	
+	/**
+	 * Translate a plugin name
+	 * Uses get_plugin_data if available.
+	 * @param string $plugin Plugin name (possible paths will be guessed)
+	 * @return string
+	 */
+	private function _get_plugin_name( $plugin ) {
+		if ( function_exists( 'get_plugin_data' ) ) {
+			$plugin_info = array();
+			$possible_paths = array(
+				WP_PLUGIN_DIR . "/$plugin.php",
+				WP_PLUGIN_DIR . "/$plugin/$plugin.php",
+				WPMU_PLUGIN_DIR . "/$plugin.php"
+			);
+			foreach ( $possible_paths as $path ) {
+				if ( file_exists( $path ) ) {
+					$plugin_info = get_plugin_data( $path );
+					if ( !empty( $plugin_info ) && !empty( $plugin_info['Name'] ) ) {
+						return $plugin_info['Name'];
+					}
+				}
+			}
+		}
+		return $this->_format_name( $plugin );
+	}
+
+	/**
+	 * Translate a theme name
+	 * Uses get_theme_data if available.
+	 * @param string $plugin Theme name (possible path will be guessed)
+	 * @return string
+	 */
+	private function _get_theme_name( $theme ) {
+		if ( function_exists( 'get_theme_data' ) ) {
+			$theme_info = get_theme_data( WP_CONTENT_DIR . '/themes/' . $theme . '/style.css' );
+			if ( !empty( $theme_info ) && !empty( $theme_info['Name'] ) ) {
+				return $theme_info['Name'];
+			}
+		}
+		return $this->_format_name( $theme );
+	}
+	
+	/**
+	 * Format plugin / theme name.  This is only to be used if
+	 * get_plugin_data() / get_theme_data() aren't available or if the
+	 * original files are missing
+	 * @param string $name
+	 * @return string
+	 */
+	private function _format_name( $name ) {
+		return ucwords( str_replace( array( '-', '_' ), ' ', $name ) );
 	}
 }
