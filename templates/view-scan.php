@@ -94,14 +94,15 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 
 						// Send the data
 						jQuery.post( ajaxurl, data, function( response ) {
-							if ( "1" == response ) {
+                                                        response = response.trim();
+							if ( "1" == response.substring( 0, 1 ) ) {
 								$( "#p3-email-success-recipient" ).html( jQuery( '#p3-email-results-to' ).val() );
 								$( "#p3-email-sending-success" ).show();
 								$( "#p3-email-sending-error" ).hide();
 								$( "#p3-email-sending-loading" ).hide();
 								$( "#p3-email-sending-close" ).show();
 							} else {
-								if ( "-1" == response ) {
+								if ( "-1" == response.substring( 0, 2 ) ) {
 									$( "#p3-email-error" ).html( "nonce error" );
 								} else if ( "0" == response.charAt( 0 ) ) {
 									$( "#p3-email-error" ).html( response.substr( 2 ) );
