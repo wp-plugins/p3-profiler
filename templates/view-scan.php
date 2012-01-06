@@ -168,7 +168,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 		<?php if ( !empty( $profile ) ){ ?>
 			<?php foreach ( $profile->plugin_times as $k => $v ) { ?>
 				{
-					label: "<?php echo $k; ?>",
+					label: "<?php echo esc_js( $k ); ?>",
 					data: <?php echo $v; ?>
 				},
 			<?php } ?>
@@ -406,7 +406,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 
 
 	/**************************************************************/
-	/**  Compnent bar chart data                                 **/
+	/**  Component bar chart data                                 **/
 	/**************************************************************/
 	var chart_<?php echo $component_breakdown_chart_id; ?> = null;
 	var data_<?php echo $component_breakdown_chart_id; ?> = [
@@ -436,7 +436,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 		<?php $i = 2; $other = 0; ?>
 		<?php foreach ( $profile->plugin_times as $k => $v ) { ?>
 			{
-				label: '<?php echo $k; ?>',
+				label: '<?php echo esc_js( $k ); ?>',
 				data: [[
 					<?php echo $i++; ?>,
 					<?php echo $v; ?>
@@ -476,7 +476,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 						<?php foreach ( $profile->plugin_times as $k => $v ) { ?>
 							[
 								<?php echo $i++ ?>,
-								'<?php echo $k; ?>'
+								'<?php echo esc_js( $k ); ?>'
 							],
 						<?php } ?>
 					],
@@ -552,7 +552,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 		<?php if ( !empty( $profile ) && !empty( $profile->detected_plugins ) ) { ?>
 			<?php foreach ( $profile->detected_plugins as $plugin ) { ?>
 				{
-					label: "<?php echo $plugin; ?>",
+					label: "<?php echo esc_js( $plugin ); ?>",
 					data: [
 					<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
 						<?php if ( array_key_exists( $plugin, $v['breakdown'] ) ) { ?>
@@ -575,7 +575,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 			jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="WP Core Time" />WP Core Time</label></div>' );
 			jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="Theme" />Theme</label></div>' );
 			<?php foreach ( $profile->detected_plugins as $plugin ) { ?>
-				jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="<?php echo $plugin; ?>" /><?php echo $plugin ;?></label></div>' );
+				jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="<?php echo esc_html( $plugin ); ?>" /><?php echo esc_html( $plugin ); ?></label></div>' );
 			<?php } ?>
 		<?php } ?>
 		jQuery( "input.p3-detailed-series-toggle" ).click( function() {
@@ -1052,7 +1052,7 @@ to share the results with you.  Please take a look at the information below:</te
 			echo "\nPlugin list:\n";
 			echo "===========================================\n";
 			foreach ( $profile->plugin_times as $k => $v) {
-				echo $k . ' - ' . sprintf('%.4f sec', $v) . ' - ' . sprintf( '%.2f%%', $v * 100 / array_sum( $profile->plugin_times ) ) . "\n";
+				echo esc_html( $k ) . ' - ' . sprintf('%.4f sec', $v) . ' - ' . sprintf( '%.2f%%', $v * 100 / array_sum( $profile->plugin_times ) ) . "\n";
 			}
 			?></textarea>
 		</div>
