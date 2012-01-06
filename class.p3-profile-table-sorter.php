@@ -39,7 +39,7 @@ class P3_Profile_Table_Sorter {
 	 * @return array
 	 */
 	public function sort( $direction = 'asc' ) {
-		usort( &$this->data, array( $this, '_compare' ) );
+		usort( $this->data, array( $this, '_compare' ) );
 		return ( 'asc' == $direction ) ? $this->data : array_reverse( $this->data );
 	}
 	
