@@ -314,7 +314,7 @@ class P3_Profiler {
 		// Check for "eval()'d code"
 		if ( strpos( $file, "eval()'d" ) ) {
 			list($file, $junk) = explode(': eval(', $str, 2);
-			$file = preg_replace('/\(\d*\)/', '', $file);
+			$file = preg_replace('/\(\d*\)$/', '', $file);
 		}
 		
 		unset( $bt );
