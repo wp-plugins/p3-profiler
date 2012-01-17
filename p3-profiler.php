@@ -663,7 +663,7 @@ class P3_Profiler_Plugin {
 
 		// mu-plugins doesn't exist	
 		if ( !file_exists( WPMU_PLUGIN_DIR ) && is_writable( WPMU_PLUGIN_DIR . '/../' ) ) {
-			$flag = wp_mkdir_p( WPMU_PLUGIN_DIR );
+			wp_mkdir_p( WPMU_PLUGIN_DIR );
 		}
 		if ( file_exists( WPMU_PLUGIN_DIR ) && is_writable( WPMU_PLUGIN_DIR ) ) {
 			file_put_contents(
