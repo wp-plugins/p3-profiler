@@ -4,7 +4,7 @@ Plugin Name: P3 (Plugin Performance Profiler)
 Plugin URI: http://support.godaddy.com/godaddy/wordpress-p3-plugin/
 Description: See which plugins are slowing down your site.  Create a profile of your WordPress site's plugins' performance by measuring their impact on your site's load time.
 Author: GoDaddy.com
-Version: 1.1.1
+Version: 1.1.2
 Author URI: http://www.godaddy.com/
 */
 
@@ -438,6 +438,7 @@ class P3_Profiler_Plugin {
 
 		// Save the new options
 		update_option( 'p3-profiler_disable_opcode_cache', 'true' == $_POST['p3_disable_opcode_cache'] );
+		update_option( 'p3-profiler_cache_buster', 'true' == $_POST['p3_cache_buster'] );
 		update_option( 'p3-profiler_use_current_ip', 'true' == $_POST['p3_use_current_ip'] );
 		update_option( 'p3-profiler_ip_address', $_POST['p3_ip_address'] );
 	
@@ -754,6 +755,7 @@ class P3_Profiler_Plugin {
 				delete_option( 'p3-profiler_use_current_ip' );
 				delete_option( 'p3-profiler_ip_address' );
 				delete_option( 'p3-profiler_version' );
+				delete_option( 'p3-profiler_cache_buster' );
 			}
 			restore_current_blog();
 		} else {
@@ -764,6 +766,7 @@ class P3_Profiler_Plugin {
 			delete_option( 'p3-profiler_use_current_ip' );
 			delete_option( 'p3-profiler_ip_address' );
 			delete_option( 'p3-profiler_version' );
+			delete_option( 'p3-profiler_cache_buster' );
 		}
 	}
 
@@ -822,6 +825,7 @@ class P3_Profiler_Plugin {
 		delete_option( 'p3-profiler_use_current_ip' );
 		delete_option( 'p3-profiler_ip_address' );
 		delete_option( 'p3-profiler_version' );
+		delete_option( 'p3-profiler_cache_buster' );
 	}
 
 	/**
@@ -840,6 +844,12 @@ class P3_Profiler_Plugin {
 			update_option( 'p3-profiler_use_current_ip', true );
 			update_option( 'p3-profiler_ip_address', '' );
 			update_option( 'p3-profiler_version', '1.1.0' );
+		}
+		
+		// Upgrading from < 1.1.2
+		elseif ( version_compare( $version, '1.1.2') < 0 ) {
+			update_option( 'p3-profiler_cache_buster', true );
+			update_option( 'p3-profiler_version', '1.1.2' );
 		}
 
 		// Ensure the profiles folder is there
