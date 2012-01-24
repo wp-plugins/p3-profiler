@@ -217,11 +217,7 @@ EOD;
 				}
 			}
 			$count = count( $_REQUEST['scan'] );
-			if ( $count == 1 ) {
-				$p3_profiler_plugin->add_notice( "Deleted $count scan." );
-			} else {
-				$p3_profiler_plugin->add_notice( "Deleted $count scans." );
-			}
+			printf('<div id="updated"><p>Deleted %d %s.</p></div>', $count, ($count == 1) ? 'scan' : 'scans' );
 		}
     }
 

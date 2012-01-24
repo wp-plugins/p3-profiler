@@ -73,7 +73,6 @@ register_activation_hook( P3_PATH . DIRECTORY_SEPARATOR . 'p3-profiler.php', arr
 register_deactivation_hook( P3_PATH . DIRECTORY_SEPARATOR . 'p3-profiler.php', array( $p3_profiler_plugin, 'deactivate' ) );
 register_uninstall_hook( P3_PATH . DIRECTORY_SEPARATOR . 'p3-profiler.php', array( 'P3_Profiler_Plugin', 'uninstall' ) );
 if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-	add_action( 'wpmu_add_blog', array( $p3_profiler_plugin, 'add_blog' ) );
 	add_action( 'wpmu_delete_blog', array( $p3_profiler_plugin, 'delete_blog' ) );
 }
 
@@ -91,7 +90,25 @@ class P3_Profiler_Plugin {
 	 * @var P3_Profile_Table
 	 */
 	public $scan_table = null;
+
+	/**
+	 * Name of the current scan being viewed
+	 * @var string
+	 */
+	public $scan = '';
 	
+	/**
+	 * Current action
+	 * @var string
+	 */
+	public $action = '';
+
+	/**
+	 * Profile reader object
+	 * @var P3_Profile_Reader
+	 */
+	public $profile = '';
+
 	/**
 	 * Remove the admin bar from the customer site when profiling is enabled
 	 * to prevent skewing the numbers, as much as possible.  Also prevent ssl
@@ -207,9 +224,47 @@ class P3_Profiler_Plugin {
 
 		// Only for our page
 		if ( isset( $_REQUEST['page'] ) && basename( __FILE__ ) == $_REQUEST['page'] ) {
+
+			// Set up the request based on p3_action
+			if ( !empty( $_REQUEST['p3_action'] ) ) {
+				$this->action = $_REQUEST['p3_action'];
+			}
+			if ( empty( $this->action ) || 'current-scan' == $this->action ) {
+				$this->scan = $this->get_latest_profile();
+				$this->action = 'current-scan';
+			} elseif ( 'view-scan' == $this->action ) {
+				$this->scan = '';
+				if ( !empty( $_REQUEST['name'] ) ) {
+					$this->scan = sanitize_file_name( basename( $_REQUEST['name'] ) );
+				}
+				if ( empty( $this->scan ) || !file_exists( P3_PROFILES_PATH . "/{$this->scan}" ) ) {
+					wp_die( '<div id="message" class="error"><p>Scan does not exist</p></div>' );
+				}
+				$this->scan = P3_PROFILES_PATH . "/{$this->scan}";
+			}
+
+			// If there's a scan, create a viewer object
+			if ( !empty( $this->scan ) ) {
+				try {
+					$this->profile = new P3_Profile_Reader( $this->scan );
+				} catch ( P3_Profile_No_Data_Exception $e ) {
+					echo '<div class="error"><p>' . $e->getMessage() . '</p></div>';
+					$this->scan = null;
+					$this->profile = null;
+					$this->action = 'list-scans';
+				} catch ( Exception $e ) {
+					wp_die( '<div id="message" class="error"><p>Error reading scan</p></div>' );
+				}
+			} else {
+				$this->profile = null;
+			}
+
+			
 			// Load the list table, let it handle any bulk actions
-			$this->scan_table = new P3_Profile_Table();
-			$this->scan_table->prepare_items();
+			if ( empty( $this->profile ) && in_array( $this->action, array( 'list-scans', 'current-scan' ) ) ) {
+				$this->scan_table = new P3_Profile_Table();
+				$this->scan_table->prepare_items();
+			}
 
 			// Usability message
 			if ( !defined( 'WPP_PROFILING_STARTED' ) ) {
@@ -221,15 +276,10 @@ class P3_Profiler_Plugin {
 	/**
 	 * Dispatcher function.  All requests enter through here
 	 * and are routed based upon the p3_action request variable
-	 * @uses $_REQUEST['p3_action']
 	 * @return void
 	 */
 	public function dispatcher() {
-		$p3_action = '';
-		if ( ! empty ( $_REQUEST ['p3_action'] ) ) {
-			$p3_action = $_REQUEST ['p3_action'];
-		}
-		switch ( $p3_action ) {
+		switch ( $this->action ) {
 			case 'list-scans' :
 				$this->list_scans();
 				break;
@@ -249,6 +299,29 @@ class P3_Profiler_Plugin {
 				$this->scan_settings_page();
 		}
 	}
+	
+	/**
+	 * Explain why P3 is asking for FTP credentials
+	 * @return string
+	 */
+	public function fix_flag_file_help() {
+		?>
+		<div class="wrap">
+		<strong>Why am I being asked for this information?</strong>
+		<blockquote>
+			P3 cannot write to this file:<br />
+			<code><?php echo P3_FLAG_FILE; ?></code>
+			<br />
+			P3 needs to write to this file to toggle profiling for your site.
+			If you want to fix this manually, please ensure the file is readable
+			and writable by the web server.
+		</blockquote>
+		<div class="updated">
+			<p>P3 does <strong>not</strong> store or re-transmit this information.</p>
+		</div>
+		</div>
+		<?php
+	}	
 
 	/**
 	 * Write .profiling_enabled file, uses request_filesystem_credentials, if
@@ -268,10 +341,12 @@ class P3_Profiler_Plugin {
 
 		// Ask for credentials, if necessary
 		if ( false === ( $creds = request_filesystem_credentials( $url, $method, false, false, $form_fields ) ) ) {
+			$this->fix_flag_file_help();
 			return true; 
 		} elseif ( ! WP_Filesystem($creds) ) {
 			// The credentials are bad, ask again
 			request_filesystem_credentials( $url, $method, true, false, $form_fields );
+			$this->fix_flag_file_help();
 			return true;
 		} else {
 			// Once we get here, we should have credentials, do the file system operations
@@ -606,7 +681,7 @@ class P3_Profiler_Plugin {
 	public function show_notices() {
 
 		// Skip notices if we're fixing the flag file
-		if ( isset( $_REQUEST['p3_action'] ) && 'fix-flag-file' == $_REQUEST['p3_action'] ) {
+		if ( 'fix-flag-file' == $this->action ) {
 			return true;
 		}
 		
@@ -623,7 +698,7 @@ class P3_Profiler_Plugin {
 		}
 		
 		// Check that we can write .profiling_enabled
-		if ( isset( $_REQUEST['page'] ) && basename( __FILE__ ) == $_REQUEST['page'] && ( !isset( $_REQUEST['p3_action'] ) || 'fix-flag-file' != $_REQUEST['p3_action'] ) ) {
+		if ( isset( $_REQUEST['page'] ) && basename( __FILE__ ) == $_REQUEST['page'] && 'fix-flag-file' != $this->action ) {
 			if ( !file_exists( P3_FLAG_FILE ) || !is_writable( P3_FLAG_FILE ) ) {
 				@touch( P3_FLAG_FILE );
 				if ( !file_exists( P3_FLAG_FILE ) || !is_writable( P3_FLAG_FILE ) ) {
@@ -804,15 +879,7 @@ class P3_Profiler_Plugin {
 		$size /= pow( 1024, $pow );
 		return round( $size, 0 ) . ' ' . $units[$pow];
 	}
-	
-	/**
-	 * Actions to take when a multisite blog is added
-	 * @return void
-	 */
-	public function add_blog() {
-		// Reserved for future use
-	}
-	
+		
 	/**
 	 * Actions to take when a multisite blog is removed
 	 * @return void

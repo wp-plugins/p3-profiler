@@ -3,7 +3,7 @@ Contributors: Godaddy, StarfieldTech
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 3.3.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 
 See which plugins are slowing down your site.  This plugin creates a performance report for your site.
 
@@ -43,6 +43,9 @@ Manual installation:
 
 == Upgrade Notice ==
 
+= 1.1.2 =
+Fix a few bugs reported by users.  Upgrading is optional if this plugin is working well for you.
+
 = 1.1.1 =
 This release addresses a bug which which broke the UI on sites that used other plugins that contained an apostrophe in their name.  Upgrading is recommended if you were affected by this bug.
 
@@ -63,6 +66,15 @@ Warning messages like this: `Warning: usort() [function.usort]: Array was modifi
 Previous version of the plugin (before 1.1.0) did not have theme name detection support.  If you performed a scan with a previous version, then upgraded to 1.1.0+ to view the scan, the theme name will show as "unknown."
 
 == Changelog ==
+
+= 1.1.2 =
+ * Don't show screen options if there is no table
+ * Show a "rate us / tweet us" box
+ * Add an option to circumvent browser cache
+ * Bugfix - Properly work with encrypted plugins (eval based obfuscation)
+ * Bugfix - Work with suhosin/safe mode where ini_set / set_time_limit are disabled
+ * Bugfix - Remove "Options -Indexes" because it's causing 500 error in some apache setups
+ * Bugfix - Fix a warning with theme name detection if the theme is no longer installed
 
 = 1.1.1 =
  * Bugfix - Plugin names with apostrophes broke the UI

@@ -1,48 +1,14 @@
 <?php
-if ( !defined('P3_PATH') )
-	die( 'Forbidden ');
-$p3_action = '';
-if ( !empty( $_REQUEST['p3_action'] ) ) {
-	$p3_action = $_REQUEST['p3_action'];
-}
-if ( empty( $p3_action ) || 'current-scan' == $p3_action ) {
-	$scan = $this->get_latest_profile();
-	$p3_action = 'current-scan';
-} elseif ( 'view-scan' == $p3_action ) {
-	$scan = '';
-	if ( !empty( $_REQUEST['name'] ) ) {
-		$scan = sanitize_file_name( basename( $_REQUEST['name'] ) );
-	}
-	if ( empty( $scan ) || !file_exists( P3_PROFILES_PATH . "/$scan" ) ) {
-		wp_die( '<div id="message" class="error"><p>Scan does not exist</p></div>' );
-	}
-	$scan = P3_PROFILES_PATH . "/$scan";
-}
+
 $button_current_checked = '';
 $button_history_checked = '';
 $button_help_checked    = '';
-if ( 'current-scan' == $p3_action || !empty( $_REQUEST['current_scan'] ) ) {
+if ( 'current-scan' == $this->action || !empty( $_REQUEST['current_scan'] ) ) {
 	$button_current_checked = 'checked="checked"';
-} elseif ( 'help' == $p3_action || 'fix-flag-file' == $p3_action ) {
+} elseif ( 'help' == $this->action || 'fix-flag-file' == $this->action ) {
 	$button_help_checked = 'checked="checked"';
 } else {
 	$button_history_checked = 'checked="checked"';
-}
-
-// If there's a scan, create a viewer object
-if ( !empty( $scan ) ) {
-	try {
-		$profile = new P3_Profile_Reader( $scan );
-	} catch ( P3_Profile_No_Data_Exception $e ) {
-		echo '<div class="error"><p>' . $e->getMessage() . '</p></div>';
-		$scan = null;
-		$profile = null;
-		$p3_action = 'list-scans';
-	} catch ( Exception $e ) {
-		wp_die( '<div id="message" class="error"><p>Error reading scan</p></div>' );
-	}
-} else {
-	$profile = null;
 }
 
 ?>
@@ -80,6 +46,13 @@ if ( !empty( $scan ) ) {
 				}
 			});
 		});
+		
+		// Callouts
+		$( "div#p3-reminder-wrapper" )
+			.corner( "round 8px" )
+			.parent()
+			.css( "padding", "4px" )
+			.corner( "round 10px" );
 	});
 </script>
 <div class="wrap">
@@ -107,11 +80,11 @@ if ( !empty( $scan ) ) {
 	<?php require_once P3_PATH . '/templates/callouts.php'; ?>
 
 	<!-- View scan or show a list of scans -->
-	<?php if ( ( 'current-scan' == $p3_action && !empty( $scan ) ) || 'view-scan' == $p3_action ) { ?>
+	<?php if ( ( 'current-scan' == $this->action && !empty( $this->scan ) ) || 'view-scan' == $this->action ) { ?>
 		<?php include_once P3_PATH . '/templates/view-scan.php'; ?>
-	<?php } elseif ( 'help' == $p3_action ) { ?>
+	<?php } elseif ( 'help' == $this->action ) { ?>
 		<?php include_once P3_PATH . '/templates/help.php'; ?>
-	<?php } elseif ( 'fix-flag-file' == $p3_action ) { ?>
+	<?php } elseif ( 'fix-flag-file' == $this->action ) { ?>
 		<?php include_once P3_PATH . '/templates/fix-flag-file.php'; ?>
 	<?php } else { ?>
 		<?php include_once P3_PATH . '/templates/list-scans.php'; ?>
@@ -119,12 +92,18 @@ if ( !empty( $scan ) ) {
 
 </div>
 
+<div id="p3-reminder">
+	<div id="p3-reminder-wrapper">
+		Do you like this plugin?
+		<ul>
+			<li><a href="http://twitter.com/home?status=<?php echo rawurlencode(htmlentities('I just optimized my WordPress site with #p3plugin http://wordpress.org/extend/plugins/p3-profiler/ ')); ?>" target="_blank">Tweet</a> about it</li>
+			<li><a href="http://wordpress.org/extend/plugins/p3-profiler/" target="_blank">Rate</a> it on the repository</li>
+		</ul>
+	</div>
+</div>
+
 <div id="p3-copyright">
 	<img src="<?php echo plugins_url() . '/p3-profiler/logo.gif'; ?>" alt="GoDaddy.com logo" title="GoDaddy.com logo" />
 	<br />
-	<?php if (date('Y') > 2011) : ?>
-		Copyright &copy; 2011-<?php echo date('Y'); ?> <a href="http://www.godaddy.com/" target="_blank">GoDaddy.com</a>.  All rights reserved.
-	<?php else : ?>
-		Copyright &copy; 2011 <a href="http://www.godaddy.com/" target="_blank">GoDaddy.com</a>.  All rights reserved.
-	<?php endif; ?>
+	Copyright &copy; 2011-<?php echo date('Y'); ?> <a href="http://www.godaddy.com/" target="_blank">GoDaddy.com</a>.  All rights reserved.
 </div>

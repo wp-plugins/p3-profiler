@@ -539,14 +539,14 @@ if ( !defined('P3_PATH') )
 		<!-- Second callout cell -->
 		<td class="p3-callout">
 			<div class="p3-callout-outer-wrapper qtip-tip" title="Total number of seconds dedicated to plugin code per visit on your site."
-				<?php if ( !empty( $scan ) ) { ?>title="From <?php echo basename( $scan ); ?><?php } ?>">
+				<?php if ( !empty( $this->scan ) ) { ?>title="From <?php echo basename( $this->scan ); ?><?php } ?>">
 				<div class="p3-callout-inner-wrapper">
 					<div class="p3-callout-caption">Plugin Load Time</div>
 					<div class="p3-callout-data">
-						<?php if ( null === $profile ) { ?>
+						<?php if ( null === $this->profile ) { ?>
 							<span class="p3-faded-grey">n/a</span>
 						<?php } else { ?>
-							<?php printf( '%.3f', $profile->averages['plugins'] ); ?>
+							<?php printf( '%.3f', $this->profile->averages['plugins'] ); ?>
 						<?php } ?>
 					</div>
 					<div class="p3-callout-caption">( sec. per visit )</div>
@@ -557,14 +557,14 @@ if ( !defined('P3_PATH') )
 		<!-- Third callout cell -->
 		<td class="p3-callout">
 			<div class="p3-callout-outer-wrapper qtip-tip" title="Percent of load time on your site dedicated to plugin code."
-				<?php if ( !empty( $scan ) ) { ?>title="From <?php echo basename( $scan ); ?><?php } ?>">
+				<?php if ( !empty( $this->scan ) ) { ?>title="From <?php echo basename( $this->scan ); ?><?php } ?>">
 				<div class="p3-callout-inner-wrapper">
 					<div class="p3-callout-caption">Plugin Impact</div>
 					<div class="p3-callout-data">
-						<?php if ( null === $profile ) { ?>
+						<?php if ( null === $this->profile ) { ?>
 							<span class="p3-faded-grey">n/a</span>
 						<?php } else { ?>
-							<?php printf( '%.1f%%', $profile->averages['plugin_impact'] ); ?>
+							<?php printf( '%.1f%%', $this->profile->averages['plugin_impact'] ); ?>
 						<?php } ?>
 					</div>
 					<div class="p3-callout-caption">( of page load time )</div>
@@ -575,14 +575,14 @@ if ( !defined('P3_PATH') )
 		<!-- Fourth callout cell -->
 		<td class="p3-callout">
 			<div class="p3-callout-outer-wrapper qtip-tip" title="Total number of database queries per visit."
-				<?php if ( !empty( $scan ) ) { ?>title="From <?php echo basename( $scan ); ?><?php } ?>">
+				<?php if ( !empty( $this->scan ) ) { ?>title="From <?php echo basename( $this->scan ); ?><?php } ?>">
 				<div class="p3-callout-inner-wrapper">
 					<div class="p3-callout-caption">MySQL Queries</div>
 					<div class="p3-callout-data">
-						<?php if ( null === $profile ) { ?>
+						<?php if ( null === $this->profile ) { ?>
 							<span class="p3-faded-grey">n/a</span>
 						<?php } else { ?>
-							<?php echo round( $profile->averages['queries'] ); ?>
+							<?php echo round( $this->profile->averages['queries'] ); ?>
 						<?php } ?>
 					</div>
 					<div class="p3-callout-caption">per visit</div>
@@ -616,7 +616,7 @@ if ( !defined('P3_PATH') )
 		<input type="checkbox" id="p3-cache-buster" <?php if ( true == get_option( 'p3-profiler_cache_buster' ) ) : ?>checked="checked"<?php endif; ?> />
 		<label for="p3-cache-buster">Attempt to circumvent browser cache</label>
 		<br />
-		<em class="p3-em">This may help fix a "No visits in this profile" error message.  See the <a href="<?php echo add_query_arg( 'p3_action', 'help' ); ?>">help</a> page for details.</em>
+		<em class="p3-em">This may help fix a "No visits in this profile" error message.  See the <a href="<?php echo add_query_arg( array( 'p3_action' => 'help', 'current_scan' => null ) ); ?>#q-circumvent-cache">help</a> page for details.</em>
 	</div>
 </div>
 

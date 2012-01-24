@@ -40,9 +40,14 @@ if ( !defined('P3_PATH') )
 		var links = [];
 		var i = 1;
 		$( "h2.p3-help-question:not(:first )" ).each( function() {
-			$( this ).before( '<a name="q' + i + '">&nbsp;</a>' );
-			links.push( '<li><a href="#q' + i + '">' + $( this ).html() + '</a></li>' );
-			i++;
+			if ( $( this ).attr( "data-question-id" ) !== undefined ) {
+				$( this ).before( '<a name="' + $( this ).attr( "data-question-id" ) + '">&nbsp;</a>' );
+				links.push( '<li><a href="#' + $( this ).attr( "data-question-id" ) + '">' + $( this ).html() + '</a></li>' );
+			} else {
+				$( this ).before( '<a name="q' + i + '">&nbsp;</a>' );
+				links.push( '<li><a href="#q' + i + '">' + $( this ).html() + '</a></li>' );
+				i++;
+			}
 		});
 		$( "div.p3-question blockquote:not(:first )" ).each( function() {
 			$( this ).after( '<a href="#top">Back to top</a>' );
@@ -96,7 +101,7 @@ if ( !defined('P3_PATH') )
 </div>
 
 <div class="p3-question">
-	<h2 class="p3-help-question">How do I fix "No visits in this profile..." ?</h2>
+	<h2 class="p3-help-question" data-question-id="q-circumvent-cache">How do I fix "No visits in this profile..." ?</h2>
 	<blockquote>
 		This error message means that after being disabled, the profiler did not record any traffic on your site.  There are several common
 		causes for this:
@@ -517,11 +522,7 @@ if ( !defined('P3_PATH') )
 	<blockquote>
 		<strong>P3 (Plugin Performance Profiler)</strong>
 		<br />
-		<?php if (date('Y') > 2011) : ?>
-			Copyright &copy; 2011-<?php echo date('Y'); ?> <a href="http://www.godaddy.com/" target="_blank">GoDaddy.com</a>.  All rights reserved.
-		<?php else : ?>
-			Copyright &copy; 2011 <a href="http://www.godaddy.com/" target="_blank">GoDaddy.com</a>.  All rights reserved.
-		<?php endif; ?>
+		Copyright &copy; 2011-<?php echo date('Y'); ?> <a href="http://www.godaddy.com/" target="_blank">GoDaddy.com</a>.  All rights reserved.
 		<br /><br />
 		This program is offered under the terms of the GNU General Public License Version 2 as published by the Free Software Foundation.
 		<br /><br />

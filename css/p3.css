@@ -277,7 +277,12 @@ p3-glossary-container {
 /** Copyright notice **/
 #p3-copyright {
 	text-align: center;
-	margin: 45px auto 5px auto;
+	position: absolute;
+	float: left;
+	margin-top: 45px;
+	margin-left: -158px;
+	width: 315px;
+	left: 50%;
 }
 #p3-copyright img {
 	margin-bottom: 7px;
@@ -352,4 +357,23 @@ div.p3-question {
 div.p3-question h2.p3-help-question {
 	margin-top: -15px;
 	border-bottom: 1px solid #cccccc;
+}
+
+
+/** Did you liek this plugin? **/
+div#p3-reminder {
+	position: relative;
+	z-index: 10;
+	float: left;
+	bottom: 0;
+	left: 0;
+	height: 75px;
+	width: 200px;
+	margin-top: 30px;
+}
+div#p3-reminder-wrapper {
+	border: 1px solid #eaeaea;
+	padding: 8px 4px 0px 4px;
+	text-align: center;
+	background-color: #f0f8fe;
 }

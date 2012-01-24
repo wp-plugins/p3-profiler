@@ -335,7 +335,7 @@ if ( !defined('P3_PATH') )
 	 * @return string
 	 */
 	private function _get_theme_name( $theme ) {
-		if ( function_exists( 'get_theme_data' ) ) {
+		if ( function_exists( 'get_theme_data' ) && file_exists( WP_CONTENT_DIR . '/themes/' . $theme . '/style.css' ) ) {
 			$theme_info = get_theme_data( WP_CONTENT_DIR . '/themes/' . $theme . '/style.css' );
 			if ( !empty( $theme_info ) && !empty( $theme_info['Name'] ) ) {
 				return $theme_info['Name'];

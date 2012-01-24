@@ -3,9 +3,9 @@ if ( !defined('P3_PATH') )
 	die( 'Forbidden ');
 $url_stats = array();
 $domain    = '';
-if ( !empty( $profile ) ) {
-	$url_stats = $profile->get_stats_by_url();
-	$domain    = @parse_url( $profile->report_url, PHP_URL_HOST );
+if ( !empty( $this->profile ) ) {
+	$url_stats = $this->profile->get_stats_by_url();
+	$domain    = @parse_url( $this->profile->report_url, PHP_URL_HOST );
 }
 $pie_chart_id                 = substr( md5( uniqid() ), -8 );
 $runtime_chart_id             = substr( md5( uniqid() ), -8 );
@@ -21,8 +21,8 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 
 	// Raw json data ( used in the charts for tooltip data
 	var _data = [];
-	<?php if ( !empty( $scan ) && file_exists( $scan ) ) { ?>
-		<?php foreach ( file( $scan, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES ) as $line ) { ?>
+	<?php if ( !empty( $this->scan ) && file_exists( $this->scan ) ) { ?>
+		<?php foreach ( file( $this->scan, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES ) as $line ) { ?>
 			_data.push(<?php echo $line; ?>);
 		<?php } ?>
 	<?php } ?>
@@ -165,10 +165,10 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 	/**  Plugin pie chart                                        **/
 	/**************************************************************/
 	var data_<?php echo $pie_chart_id; ?> = [
-		<?php if ( !empty( $profile ) ){ ?>
-			<?php foreach ( $profile->plugin_times as $k => $v ) { ?>
+		<?php if ( !empty( $this->profile ) ){ ?>
+			<?php foreach ( $this->profile->plugin_times as $k => $v ) { ?>
 				{
-					label: "<?php echo esc_js( $k ); ?>",
+					label: "<?php echo $k; ?>",
 					data: <?php echo $v; ?>
 				},
 			<?php } ?>
@@ -327,7 +327,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 		{
 			label: "# of Queries",
 			data: [
-			<?php if ( !empty( $profile ) ){ ?>
+			<?php if ( !empty( $this->profile ) ){ ?>
 				<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
 					[
 						<?php echo $k + 1; ?>,
@@ -406,7 +406,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 
 
 	/**************************************************************/
-	/**  Component bar chart data                                 **/
+	/**  Compnent bar chart data                                 **/
 	/**************************************************************/
 	var chart_<?php echo $component_breakdown_chart_id; ?> = null;
 	var data_<?php echo $component_breakdown_chart_id; ?> = [
@@ -420,23 +420,23 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 				<?php for ( $i = -999 ; $i < 999 + 2; $i++ ) { ?>
 					[
 						<?php echo $i; ?>,
-						<?php echo $profile->averages['site']; ?>
+						<?php echo $this->profile->averages['site']; ?>
 					],
 				<?php } ?>
 			]
 		},
 		{
 			label: 'WP Core Time',
-			data: [[0, <?php echo $profile->averages['core']; ?>]]
+			data: [[0, <?php echo $this->profile->averages['core']; ?>]]
 		},
 		{
 			label: 'Theme',
-			data: [[1, <?php echo $profile->averages['theme']; ?>]]
+			data: [[1, <?php echo $this->profile->averages['theme']; ?>]]
 		},
 		<?php $i = 2; $other = 0; ?>
-		<?php foreach ( $profile->plugin_times as $k => $v ) { ?>
+		<?php foreach ( $this->profile->plugin_times as $k => $v ) { ?>
 			{
-				label: '<?php echo esc_js( $k ); ?>',
+				label: '<?php echo $k; ?>',
 				data: [[
 					<?php echo $i++; ?>,
 					<?php echo $v; ?>
@@ -473,10 +473,10 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 						[1, 'WP Core Time'],
 						[2, 'Theme'],
 						<?php $i = 3; ?>
-						<?php foreach ( $profile->plugin_times as $k => $v ) { ?>
+						<?php foreach ( $this->profile->plugin_times as $k => $v ) { ?>
 							[
 								<?php echo $i++ ?>,
-								'<?php echo esc_js( $k ); ?>'
+								'<?php echo $k; ?>'
 							],
 						<?php } ?>
 					],
@@ -526,7 +526,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 		{
 			label: "WP Core Time",
 			data: [
-			<?php if ( !empty( $profile ) ){ ?>
+			<?php if ( !empty( $this->profile ) ){ ?>
 				<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
 					[
 						<?php echo $k + 1; ?>,
@@ -539,7 +539,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 		{
 			label: "Theme",
 			data: [
-			<?php if ( !empty( $profile ) ){ ?>
+			<?php if ( !empty( $this->profile ) ){ ?>
 				<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
 					[
 						<?php echo $k + 1; ?>,
@@ -549,10 +549,10 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 			<?php } ?>
 			]
 		},
-		<?php if ( !empty( $profile ) && !empty( $profile->detected_plugins ) ) { ?>
-			<?php foreach ( $profile->detected_plugins as $plugin ) { ?>
+		<?php if ( !empty( $this->profile ) && !empty( $this->profile->detected_plugins ) ) { ?>
+			<?php foreach ( $this->profile->detected_plugins as $plugin ) { ?>
 				{
-					label: "<?php echo esc_js( $plugin ); ?>",
+					label: "<?php echo $plugin; ?>",
 					data: [
 					<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
 						<?php if ( array_key_exists( $plugin, $v['breakdown'] ) ) { ?>
@@ -571,11 +571,11 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 	var detailed_timeline_options = {};
 
 	jQuery( document ).ready( function ( $ ) {
-		<?php if ( !empty( $profile ) && !empty( $profile->detected_plugins ) ) { ?>
+		<?php if ( !empty( $this->profile ) && !empty( $this->profile->detected_plugins ) ) { ?>
 			jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="WP Core Time" />WP Core Time</label></div>' );
 			jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="Theme" />Theme</label></div>' );
-			<?php foreach ( $profile->detected_plugins as $plugin ) { ?>
-				jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="<?php echo esc_html( $plugin ); ?>" /><?php echo esc_html( $plugin ); ?></label></div>' );
+			<?php foreach ( $this->profile->detected_plugins as $plugin ) { ?>
+				jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="<?php echo $plugin; ?>" /><?php echo $plugin ;?></label></div>' );
 			<?php } ?>
 		<?php } ?>
 		jQuery( "input.p3-detailed-series-toggle" ).click( function() {
@@ -879,7 +879,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<strong>Total Load Time: </strong>
 							</td>
 							<td>
-								<?php printf( '%.4f', $profile->averages['total'] ); ?> seconds <em class="p3-em">avg.</em>
+								<?php printf( '%.4f', $this->profile->averages['total'] ); ?> seconds <em class="p3-em">avg.</em>
 							</td>
 						</tr>
 						<tr>
@@ -888,7 +888,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<strong>Site Load Time</small></em></strong>
 							</td>
 							<td>
-								<?php printf( '%.4f', $profile->averages['site'] ); ?> seconds <em class="p3-em">avg.</em>
+								<?php printf( '%.4f', $this->profile->averages['site'] ); ?> seconds <em class="p3-em">avg.</em>
 							</td>
 						</tr>
 						<tr class="advanced">
@@ -898,7 +898,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<strong>Profile Overhead: </strong>
 							</td>
 							<td>
-								<?php printf( '%.4f', $profile->averages['profile'] ); ?> seconds <em class="p3-em">avg.</em>
+								<?php printf( '%.4f', $this->profile->averages['profile'] ); ?> seconds <em class="p3-em">avg.</em>
 							</td>
 						</tr>
 						<tr>
@@ -908,7 +908,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<strong>Plugin Load Time: </strong>
 							</td>
 							<td>
-								<?php printf( '%.4f', $profile->averages['plugins'] ); ?> seconds <em class="p3-em">avg.</em>
+								<?php printf( '%.4f', $this->profile->averages['plugins'] ); ?> seconds <em class="p3-em">avg.</em>
 							</td>
 						</tr>
 						<tr>
@@ -918,7 +918,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<strong>Theme Load Time: </strong>
 							</td>
 							<td>
-								<?php printf( '%.4f', $profile->averages['theme'] ); ?> seconds <em class="p3-em">avg.</em>
+								<?php printf( '%.4f', $this->profile->averages['theme'] ); ?> seconds <em class="p3-em">avg.</em>
 							</td>
 						</tr>
 						<tr>
@@ -928,7 +928,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<strong>Core Load Time: </strong>
 							</td>
 							<td>
-								<?php printf( '%.4f', $profile->averages['core'] ); ?> seconds <em class="p3-em">avg.</em>
+								<?php printf( '%.4f', $this->profile->averages['core'] ); ?> seconds <em class="p3-em">avg.</em>
 							</td>
 						</tr>
 						<tr class="advanced">
@@ -942,15 +942,15 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<strong>Margin of Error: </strong>
 							</td>
 							<td>
-								<?php printf( '%.4f', $profile->averages['drift'] ); ?> seconds <em class="p3-em">avg.</em>
+								<?php printf( '%.4f', $this->profile->averages['drift'] ); ?> seconds <em class="p3-em">avg.</em>
 								<br />
 								<em class="p3-em">
 									(<span class="qtip-tip" title="How long the site took to load. This is an observed measurement (start timing
 											when the page was requested, stop timing when the page was delivered to the browser, calculate the
-											difference)."><?php printf( '%.4f', $profile->averages['observed'] ); ?> observed<span>,
+											difference)."><?php printf( '%.4f', $this->profile->averages['observed'] ); ?> observed<span>,
 											<span class="qtip-tip" title="The expected site load time calculated by adding plugin load time, core
 											load time, theme load time, and profiler overhead.">
-											<?php printf( '%.4f', $profile->averages['expected'] ); ?> expected</span>)
+											<?php printf( '%.4f', $this->profile->averages['expected'] ); ?> expected</span>)
 								</em>
 							</td>
 						</tr>
@@ -960,7 +960,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<strong>Visits: </strong>
 							</td>
 							<td>
-								<?php echo number_format( $profile->visits ); ?>
+								<?php echo number_format( $this->profile->visits ); ?>
 							</td>
 						</tr>
 						<tr class="advanced">
@@ -968,7 +968,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<strong>Number of Plugin Function Calls: </strong>
 							</td>
 							<td>
-								<?php echo number_format( $profile->averages['plugin_calls'] ); ?> calls <em class="p3-em">avg.</em>
+								<?php echo number_format( $this->profile->averages['plugin_calls'] ); ?> calls <em class="p3-em">avg.</em>
 							</td>
 						</tr>
 						<tr>
@@ -977,7 +977,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<strong>Memory Usage: </strong>
 							</td>
 							<td>
-								<?php echo number_format( $profile->averages['memory'] / 1024 / 1024, 2 ); ?> MB <em class="p3-em">avg.</em>
+								<?php echo number_format( $this->profile->averages['memory'] / 1024 / 1024, 2 ); ?> MB <em class="p3-em">avg.</em>
 							</td>
 						</tr>
 						<tr>
@@ -986,7 +986,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<strong>MySQL Queries: </strong>
 							</td>
 							<td>
-								<?php echo round( $profile->averages['queries'] ); ?> queries <em class="p3-em">avg.</em>
+								<?php echo round( $this->profile->averages['queries'] ); ?> queries <em class="p3-em">avg.</em>
 							</td>
 						</tr>
 					</tbody>
@@ -1036,27 +1036,27 @@ to share the results with you.  Please take a look at the information below:</te
 			<textarea disabled="disabled" id="p3-email-results-results" style="width: 95%; height: 120px;"><?php 
 			echo "WordPress Plugin Profile Report\n";
 			echo "===========================================\n";
-			echo 'Report date: ' . date( 'D M j, Y', $profile->report_date ) . "\n";
-			echo 'Theme name: ' . $profile->theme_name . "\n";
-			echo 'Pages browsed: ' . $profile->visits . "\n";
-			echo 'Avg. load time: ' . sprintf( '%.4f', $profile->averages['site'] ) . " sec\n";
-			echo 'Number of plugins: ' . count( $profile->detected_plugins ) . " \n";
-			echo 'Plugin impact: ' . sprintf( '%.2f%%', $profile->averages['plugin_impact'] ) . " % of load time\n";
-			echo 'Avg. plugin time: ' . sprintf( '%.4f', $profile->averages['plugins'] ) . " sec\n";
-			echo 'Avg. core time: ' . sprintf( '%.4f', $profile->averages['core'] ) . " sec\n";
-			echo 'Avg. theme time: ' . sprintf( '%.4f', $profile->averages['theme'] ) . " sec\n";
-			echo 'Avg. mem usage: ' . number_format( $profile->averages['memory'] / 1024 / 1024, 2 ) . " MB\n";
-			echo 'Avg. plugin calls: ' . number_format( $profile->averages['plugin_calls'] ) . "\n";
-			echo 'Avg. db queries : ' . sprintf( '%.2f', $profile->averages['queries'] ) . "\n";
-			echo 'Margin of error : ' . sprintf( '%.4f', $profile->averages['drift'] ) . " sec\n";
+			echo 'Report date: ' . date( 'D M j, Y', $this->profile->report_date ) . "\n";
+			echo 'Theme name: ' . $this->profile->theme_name . "\n";
+			echo 'Pages browsed: ' . $this->profile->visits . "\n";
+			echo 'Avg. load time: ' . sprintf( '%.4f', $this->profile->averages['site'] ) . " sec\n";
+			echo 'Number of plugins: ' . count( $this->profile->detected_plugins ) . " \n";
+			echo 'Plugin impact: ' . sprintf( '%.2f%%', $this->profile->averages['plugin_impact'] ) . " % of load time\n";
+			echo 'Avg. plugin time: ' . sprintf( '%.4f', $this->profile->averages['plugins'] ) . " sec\n";
+			echo 'Avg. core time: ' . sprintf( '%.4f', $this->profile->averages['core'] ) . " sec\n";
+			echo 'Avg. theme time: ' . sprintf( '%.4f', $this->profile->averages['theme'] ) . " sec\n";
+			echo 'Avg. mem usage: ' . number_format( $this->profile->averages['memory'] / 1024 / 1024, 2 ) . " MB\n";
+			echo 'Avg. plugin calls: ' . number_format( $this->profile->averages['plugin_calls'] ) . "\n";
+			echo 'Avg. db queries : ' . sprintf( '%.2f', $this->profile->averages['queries'] ) . "\n";
+			echo 'Margin of error : ' . sprintf( '%.4f', $this->profile->averages['drift'] ) . " sec\n";
 			echo "\nPlugin list:\n";
 			echo "===========================================\n";
-			foreach ( $profile->plugin_times as $k => $v) {
-				echo esc_html( $k ) . ' - ' . sprintf('%.4f sec', $v) . ' - ' . sprintf( '%.2f%%', $v * 100 / array_sum( $profile->plugin_times ) ) . "\n";
+			foreach ( $this->profile->plugin_times as $k => $v) {
+				echo $k . ' - ' . sprintf('%.4f sec', $v) . ' - ' . sprintf( '%.2f%%', $v * 100 / array_sum( $this->profile->plugin_times ) ) . "\n";
 			}
 			?></textarea>
 		</div>
-		<input type="hidden" id="p3-email-results-scan" value="<?php echo basename( $scan ); ?>" />
+		<input type="hidden" id="p3-email-results-scan" value="<?php echo basename( $this->scan ); ?>" />
 	</div>
 	
 	<!-- Email sending dialog -->
