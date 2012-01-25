@@ -5,7 +5,7 @@ $button_history_checked = '';
 $button_help_checked    = '';
 if ( 'current-scan' == $this->action || !empty( $_REQUEST['current_scan'] ) ) {
 	$button_current_checked = 'checked="checked"';
-} elseif ( 'help' == $this->action || 'fix-flag-file' == $this->action ) {
+} elseif ( 'help' == $this->action ) {
 	$button_help_checked = 'checked="checked"';
 } else {
 	$button_history_checked = 'checked="checked"';
@@ -84,8 +84,6 @@ if ( 'current-scan' == $this->action || !empty( $_REQUEST['current_scan'] ) ) {
 		<?php include_once P3_PATH . '/templates/view-scan.php'; ?>
 	<?php } elseif ( 'help' == $this->action ) { ?>
 		<?php include_once P3_PATH . '/templates/help.php'; ?>
-	<?php } elseif ( 'fix-flag-file' == $this->action ) { ?>
-		<?php include_once P3_PATH . '/templates/fix-flag-file.php'; ?>
 	<?php } else { ?>
 		<?php include_once P3_PATH . '/templates/list-scans.php'; ?>
 	<?php } ?>

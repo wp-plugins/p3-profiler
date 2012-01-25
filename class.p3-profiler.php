@@ -86,12 +86,6 @@ class P3_Profiler {
 	 * @var string
 	 */
 	private $_P3_PATH = ''; // Cannot rely on P3_PATH, may be instantiated before the plugin
-
-	/**
-	 * Path to the ".profiling_enabled" flag file
-	 * @var string
-	 */
-	private $_P3_FLAG_FILE = '';
 	
 	/**
 	 * Last stack should be marked as plugin time
@@ -121,21 +115,15 @@ class P3_Profiler {
 
 		// Set up paths
 		$this->_P3_PATH      = realpath( dirname( __FILE__ ) );
-		$this->_P3_FLAG_FILE = $this->_P3_PATH . DIRECTORY_SEPARATOR . '.profiling_enabled';
 
 		// Check to see if we should profile
-		$p3_json = ( file_exists( $this->_P3_FLAG_FILE ) ? json_decode( file_get_contents( $this->_P3_FLAG_FILE ) ) : null );
-		if ( empty( $p3_json ) ) {
-			return $this;
-		}
-		$found = false;
-		foreach ( (array) $p3_json as $v ) {
-			if ( 0 === strpos( $_SERVER['REQUEST_URI'], $v->site_url ) && preg_match( '/' . $v->ip . '/', $this->get_ip() ) ) {
-				$found = true;
-				break;
+		if ( function_exists( 'get_option') ) {
+			$opts = get_option('p3-profiler_profiling_enabled');
+			if ( empty($opts) ) {
+				return $this;
 			}
 		}
-		if ( !$found ) {
+		if ( !preg_match( '/' . $opts['ip'] . '/', $this->get_ip() ) ) {
 			return $this;
 		}
 
@@ -144,7 +132,7 @@ class P3_Profiler {
 		@set_time_limit( 90 );
 		
 		// Set the profile file
-		$this->_profile_filename = $v->name . '.json';
+		$this->_profile_filename = $opts['name'] . '.json';
 
 		// Start timing
 		$this->_start_time      = microtime( true );
@@ -165,7 +153,7 @@ class P3_Profiler {
 		// Add some startup information
 		$this->_profile = array(
 			'url'   => $this->_get_url(),
-			'ip'    => ( array_key_exists( 'HTTP_X_FORWARDED_FOR', $_SERVER ) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'] ),
+			'ip'    => $this->get_ip(),
 			'pid'   => getmypid(),
 			'date'  => @date( 'c' ),
 			'stack' => array()
@@ -173,7 +161,7 @@ class P3_Profiler {
 
 		// Clear any opcode caches, the optimization / caching from these can
 		// hide calls from the tick handler and backtraces
-		if ( $v->disable_opcode_cache ) {
+		if ( $opts['disable_opcode_cache'] ) {
 			if ( extension_loaded( 'xcache' ) && function_exists( 'xcache_clear_cache' ) && !ini_get( 'xcache.admin.enable_auth' ) ) {
 				for ( $i = 0 ; $i < xcache_count( XC_TYPE_PHP ); $i++ ) {
 					xcache_clear_cache( XC_TYPE_PHP, 0 );

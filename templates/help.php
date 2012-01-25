@@ -101,7 +101,7 @@ if ( !defined('P3_PATH') )
 </div>
 
 <div class="p3-question">
-	<h2 class="p3-help-question" data-question-id="q-circumvent-cache">How do I fix "No visits in this profile..." ?</h2>
+	<h2 class="p3-help-question" data-question-id="q-circumvent-cache">How do I fix "No visits recorded..." ?</h2>
 	<blockquote>
 		This error message means that after being disabled, the profiler did not record any traffic on your site.  There are several common
 		causes for this:
@@ -155,60 +155,16 @@ if ( !defined('P3_PATH') )
 		target="_blank">.user.ini</a> file, but be careful. The .user.ini files are cached, so you must remove the entry from your
 		.user.ini file before you remove this plugin.
 		<br /><br />
-		This plugin automatically enables itself in .htaccess if possible, or, if that doesn't succeed, it creates a
-		<a href="http://codex.wordpress.org/Must_Use_Plugins" target="_blank">must-use</a> plugin to load before other plugins.
-		If neither of those methods work, it runs like a regular plugin.
+		This plugin automatically creates a <a href="http://codex.wordpress.org/Must_Use_Plugins" target="_blank">must-use</a>
+		plugin to load before other plugins.  If that doesn't work, it runs like a regular plugin.
 		<br /><br />
 		You are currently using: 
 	<?php
-
-	// .htaccess file test
-	$htaccess_file    = P3_PATH . '/../../../.htaccess';
-	$htaccess_content = '';
-	if ( file_exists( $htaccess_file ) ) {
-		$htaccess_content = extract_from_markers( $htaccess_file, 'p3-profiler' );
-		foreach ( $htaccess_content as $k => $v ) {
-			if ( '#' == substr( trim( $v ), 0, 1 ) ) {
-				unset( $htaccess_content[$k] ); // Get rid of comment lines
-			}
-		}
-		$htaccess_content = implode( "\n", $htaccess_content );
-	}
-
 	// must-use plugin file
-	$mu_file = P3_PATH . '/../../mu-plugins/p3-profiler.php';
-
-	// List php ini files
-	$ini_files = array_filter(
-		array_merge(
-			array( php_ini_loaded_file() ),
-			explode( ',', php_ini_scanned_files() )
-		)
-	);
+	$mu_file = WPMU_PLUGIN_DIR . '/p3-profiler.php';
 	?>
-
-	<?php /* .htaccess file is there, the profiler content is there, hasn't been commented out, and the auto_prepend_file directive is active */ ?>
-	<?php  if (
-			file_exists( $htaccess_file ) &&
-			!empty( $htaccess_content ) &&
-			false !== strpos( $htaccess_content, 'start-profile.php' ) &&
-			false !== strpos( ini_get( 'auto_prepend_file' ), 'start-profile.php' ) ) { ?>
-		<a href="http://php.net/manual/en/configuration.changes.php" target="_blank">.htaccess file</a>
-		- <code><?php echo realpath( $htaccess_file ); ?></code>
-	<?php /* the auto_prepend_file directive is active */ ?>
-	<?php } elseif ( false !== strpos( ini_get( 'auto_prepend_file' ), 'start-profile.php' ) ){ ?>
-		<a href="http://www.php.net/manual/en/configuration.file.php" target="_blank">php.ini</a>
-		<?php if ( version_compare( phpversion(), '5.3.0' ) >= 0 ) { ?>
-			or <a href="http://www.php.net/manual/en/configuration.file.per-user.php" target="_blank">.user.ini</a>
-		<?php } ?>
-		entry from one of these files:
-		<ul>
-			<?php foreach ( $ini_files as $file ) { ?>
-				<ol><code><?php echo trim( $file ); ?></code></ol>
-			<?php } ?>
-		</ul>
 	<?php /* must-use plugin file is there and not-empty */ ?>
-	<?php } elseif ( file_exists( $mu_file ) && filesize( $mu_file ) > 0 ){ ?>
+	<?php if ( file_exists( $mu_file ) && filesize( $mu_file ) > 0 ){ ?>
 		<a href="http://codex.wordpress.org/Must_Use_Plugins" target="_blank">must-use plugin</a>
 		- <code><?php echo realpath( $mu_file ); ?></code>
 	<?php /* default, using this plugin file */ ?>

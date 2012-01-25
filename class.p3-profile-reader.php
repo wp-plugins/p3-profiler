@@ -188,7 +188,7 @@ if ( !defined('P3_PATH') )
 
 		// Check for empty data
 		if ( empty( $this->_data ) ) {
-			throw new P3_Profile_No_Data_Exception('No visits in this profile.  Check the IP address you\'re scanning from.');
+			throw new P3_Profile_No_Data_Exception('No visits recorded during this profiling session.');
 		}
 		
 		foreach ( $this->_data as $o ) {

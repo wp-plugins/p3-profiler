@@ -402,7 +402,7 @@ if ( !defined('P3_PATH') )
 				if ( response.indexOf( '.json' ) < 0 ) {
 					alert( "There was an error processing your request.  Please reload the page and try again. [" + response + "]");
 				} else {
-					location.href = "<?php echo add_query_arg( array( 'p3_action' => 'current-scan', 'current_scan' => 1 ) ); ?>&name=" + response;
+					location.href = "<?php echo add_query_arg( array( 'p3_action' => 'view-scan', 'current_scan' => '1', 'name' => null ) ); ?>&name=" + response;
 				}
 			})
 			$( "#p3-scanner-dialog" ).dialog( "close" );
@@ -616,7 +616,7 @@ if ( !defined('P3_PATH') )
 		<input type="checkbox" id="p3-cache-buster" <?php if ( true == get_option( 'p3-profiler_cache_buster' ) ) : ?>checked="checked"<?php endif; ?> />
 		<label for="p3-cache-buster">Attempt to circumvent browser cache</label>
 		<br />
-		<em class="p3-em">This may help fix a "No visits in this profile" error message.  See the <a href="<?php echo add_query_arg( array( 'p3_action' => 'help', 'current_scan' => null ) ); ?>#q-circumvent-cache">help</a> page for details.</em>
+		<em class="p3-em">This may help fix a "No visits recorded" error message.  See the <a href="<?php echo add_query_arg( array( 'p3_action' => 'help', 'current_scan' => null ) ); ?>#q-circumvent-cache">help</a> page for details.</em>
 	</div>
 </div>
 

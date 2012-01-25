@@ -555,12 +555,14 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 					label: "<?php echo $plugin; ?>",
 					data: [
 					<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
-						<?php if ( array_key_exists( $plugin, $v['breakdown'] ) ) { ?>
-							[
-								<?php echo $k + 1; ?>,
+						[
+							<?php echo $k + 1; ?>,
+							<?php if ( array_key_exists( $plugin, $v['breakdown'] ) ) : ?>
 								<?php echo $v['breakdown'][$plugin]; ?>
-							],
-						<?php } ?>
+							<?php else : ?>
+								0
+							<?php endif; ?>
+						],
 					<?php } ?>
 					]
 				},
