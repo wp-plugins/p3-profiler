@@ -246,10 +246,12 @@ class P3_Profiler {
 
 		// Examine the current stack, see if we should track it.  It should be
 		// related to a plugin file if we're going to track it
-		if ( defined( 'DEBUG_BACKTRACE_IGNORE_ARGS' ) ) {
+		if ( version_compare( PHP_VERSION, '5.3.6' ) < 0 ) {
+			$bt = debug_backtrace( true );
+		} elseif ( version_compare( PHP_VERSION, '5.4.0' ) < 0 ) {
 			$bt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT );
 		} else {
-			$bt = debug_backtrace( true );
+			$bt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT, 2 ); // Examine the last 2 frames
 		}
 
 		// Find our function
@@ -257,6 +259,10 @@ class P3_Profiler {
 		if ( count( $bt ) >= 2 ) {
 			$frame = $bt[1];
 		}
+		$lambda_file = @$bt[0]['file'];
+
+		// Free up memory
+		unset( $bt );
 
 		// Include/require
 		if ( in_array( strtolower( $frame['function'] ), array( 'include', 'require', 'include_once', 'require_once' ) ) ) {
@@ -288,7 +294,7 @@ class P3_Profiler {
 
 		// Lambdas / closures
 		} elseif ( '__lambda_func' == $frame['function'] || '{closure}' == $frame['function'] ) {
-			$file = preg_replace( '/\(\d+\)\s+:\s+runtime-created function/', '', $bt[0]['file'] );
+			$file = preg_replace( '/\(\d+\)\s+:\s+runtime-created function/', '', $lambda_file );
 
 		// Files, no other hints
 		} elseif ( isset( $frame['file'] ) ) {
@@ -304,8 +310,6 @@ class P3_Profiler {
 			list($file, $junk) = explode(': eval(', $str, 2);
 			$file = preg_replace('/\(\d*\)$/', '', $file);
 		}
-		
-		unset( $bt );
 
 		// Is it a plugin?
 		$plugin = $this->_is_a_plugin_file( $file );
