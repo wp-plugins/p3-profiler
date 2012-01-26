@@ -575,7 +575,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 			jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="WP Core Time" />WP Core Time</label></div>' );
 			jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="Theme" />Theme</label></div>' );
 			<?php foreach ( $this->profile->detected_plugins as $plugin ) { ?>
-				jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="<?php echo $plugin; ?>" /><?php echo $plugin ;?></label></div>' );
+				jQuery( "#p3-detailed-series-toggle" ).append( '<div><label><input type="checkbox" checked="checked" class="p3-detailed-series-toggle" data-key="<?php echo esc_html( $plugin ); ?>" /><?php echo esc_html( $plugin ); ?></label></div>' );
 			<?php } ?>
 		<?php } ?>
 		jQuery( "input.p3-detailed-series-toggle" ).click( function() {
