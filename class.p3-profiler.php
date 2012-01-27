@@ -168,8 +168,9 @@ class P3_Profiler {
 				}
 			} elseif ( extension_loaded( 'apc' ) && function_exists( 'apc_clear_cache' ) ) {
 				apc_clear_cache();
-			} elseif ( extension_loaded( 'eaccelerator' ) && function_exists( 'eaccelerator_clean' ) ) {
-				@eaccelerator_clean();
+				@ini_set( 'apc.optimization', 0 );
+			} elseif ( extension_loaded( 'eaccelerator' ) && function_exists( 'eaccelerator_optimizer' ) ) {
+				@eaccelerator_optimizer( false );
 			}
 		}
 
