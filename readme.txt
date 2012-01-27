@@ -68,6 +68,12 @@ Warning messages like this: `Warning: usort() [function.usort]: Array was modifi
 
 Previous version of the plugin (before 1.1.0) did not have theme name detection support.  If you performed a scan with a previous version, then upgraded to 1.1.0+ to view the scan, the theme name will show as "unknown."
 
+= How do I get support for P3? =
+
+We love to make P3 better.  When reporting a bug, please visit this page so we can get more information:  [http://x.co/p3support](http://x.co/p3support)
+
+Thanks!
+
 == Changelog ==
 
 = 1.1.3 =
