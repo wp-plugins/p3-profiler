@@ -257,7 +257,7 @@ if ( !defined('P3_PATH') )
 		}
 		$this->averages = array(
 			'total'         => $this->total_time / $this->visits,
-			'site'          => ( $this->total_time - $this->profile_time) / $this->visits,
+			'site'          => ( $this->total_time - $this->profile_time ) / $this->visits,
 			'core'          => $this->core_time / $this->visits,
 			'plugins'       => $this->plugin_time / $this->visits,
 			'profile'       => $this->profile_time / $this->visits,
