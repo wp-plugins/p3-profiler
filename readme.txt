@@ -3,7 +3,7 @@ Contributors: Godaddy, StarfieldTech
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 3.3.1
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 
 See which plugins are slowing down your site.  This plugin creates a performance report for your site.
 
@@ -43,6 +43,9 @@ Manual installation:
 
 == Upgrade Notice ==
 
+= 1.1.3 =
+Fixed a regression bug re-introduced in v 1.1.2.  Thanks to user adamf for finding this so quickly!
+
 = 1.1.2 =
 Fix a few bugs reported by users.  Upgrading is optional if this plugin is working well for you.
 
@@ -65,7 +68,16 @@ Warning messages like this: `Warning: usort() [function.usort]: Array was modifi
 
 Previous version of the plugin (before 1.1.0) did not have theme name detection support.  If you performed a scan with a previous version, then upgraded to 1.1.0+ to view the scan, the theme name will show as "unknown."
 
+= How do I get support for P3? =
+
+We love to make P3 better.  When reporting a bug, please visit this page so we can get more information:  [http://x.co/p3support](http://x.co/p3support)
+
+Thanks!
+
 == Changelog ==
+
+= 1.1.3 =
+ * Bugfix - regression bug re-introduced in v 1.1.2.  Thanks to user adamf for finding this so quickly!
 
 = 1.1.2 =
  * Don't show screen options if there is no table
