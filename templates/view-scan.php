@@ -1007,26 +1007,26 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 	<!-- Email results dialog -->
 	<div id="p3-email-results-dialog" class="p3-dialog">
 		<div>
-			From:<br />
+			<span id="p3-email-from-label">From:</span><br />
 			<input type="text" id="p3-email-results-from" style="width:95%;" size="35"
 				value="<?php $user = wp_get_current_user(); echo $user->user_email; ?>" title="Enter the e-mail address to send from" />
 		</div>
 		<br />
 		<div>
-			Recipient:<br />
+			<span id="p3-email-recipient-label">Recipient:</span><br />
 			<input type="text" id="p3-email-results-to" style="width:95%;" size="35"
 				value="<?php $user = wp_get_current_user(); echo $user->user_email; ?>"
 				title="Enter the e-mail address where you would like to send these results" />
 		</div>
 		<br />
 		<div>
-			Subject:<br />
+			<span id="p3-email-subject-label">Subject:</span><br />
 			<input type="text" id="p3-email-results-subject" style="width:95%;" size="35"
 				value="Performance Profile Results - <?php bloginfo( 'name' ); ?>" title="Enter the e-mail subject" />
 		</div>
 		<br />
 		<div>
-			Message: <em class="p3-em">( optional )</em><br />
+			<span id="p3-email-message-label">Message: <em class="p3-em">(optional)</em><br /></span>
 			<textarea id="p3-email-results-message" style="width: 95%; height: 100px;">Hello,
 
 I profiled my WordPress site's performance using the Profile Plugin and I wanted
@@ -1034,7 +1034,7 @@ to share the results with you.  Please take a look at the information below:</te
 		</div>
 		<br />
 		<div>
-			Results: <em class="p3-em">( system generated, do not edit )</em><br />
+			<span id="p3-email-results-label">Results: <em class="p3-em">(system generated, do not edit)</em></span><br />
 			<textarea disabled="disabled" id="p3-email-results-results" style="width: 95%; height: 120px;"><?php 
 			echo "WordPress Plugin Profile Report\n";
 			echo "===========================================\n";
