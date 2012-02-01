@@ -159,19 +159,26 @@ class P3_Profiler {
 			'stack' => array()
 		);
 
-		// Clear any opcode caches, the optimization / caching from these can
-		// hide calls from the tick handler and backtraces
+		// Disable opcode optimizers.  These "optimize" calls out of the stack
+		// and hide calls from the tick handler and backtraces
 		if ( $opts['disable_opcode_cache'] ) {
-			if ( extension_loaded( 'xcache' ) && function_exists( 'xcache_clear_cache' ) && !ini_get( 'xcache.admin.enable_auth' ) ) {
-				for ( $i = 0 ; $i < xcache_count( XC_TYPE_PHP ); $i++ ) {
-					xcache_clear_cache( XC_TYPE_PHP, 0 );
+			if ( extension_loaded( 'xcache' ) ) {
+				@ini_set( 'xcache.optimizer', false ); // Will be implemented in 2.0, here for future proofing
+				// XCache seems to do some optimizing, anyway.  The recorded stack size is smaller with xcache.cacher enabled than without.
+			} elseif ( extension_loaded( 'apc' ) ) {
+				@ini_set( 'apc.optimization', 0 ); // Removed in APC 3.0.13 (2007-02-24)
+			} elseif ( extension_loaded( 'eaccelerator' ) ) {
+				@ini_set( 'eaccelerator.optimizer', 0 );
+				if ( function_exists( 'eaccelerator_optimizer' ) ) {
+					@eaccelerator_optimizer( false );
 				}
-			} elseif ( extension_loaded( 'apc' ) && function_exists( 'apc_clear_cache' ) ) {
-				apc_clear_cache();
-				@ini_set( 'apc.optimization', 0 );
-			} elseif ( extension_loaded( 'eaccelerator' ) && function_exists( 'eaccelerator_optimizer' ) ) {
-				@eaccelerator_optimizer( false );
+				// If you're reading this, try setting eaccelerator.optimizer = 0 in a .user.ini or .htaccess file
+			} elseif (extension_loaded( 'Zend Optimizer+' ) ) {
+				@ini_set('zend_optimizerplus.optimization_level', 0);
 			}
+			// Tested with wincache
+			// Tested with ioncube
+			// Tested with zend guard loader
 		}
 
 		// Monitor all function-calls
