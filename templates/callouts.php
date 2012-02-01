@@ -531,7 +531,7 @@ if ( !defined('P3_PATH') )
 						echo $active_plugins;
 						?>
 					</div>
-					<div class="p3-callout-caption">( currently active )</div>
+					<div class="p3-callout-caption">(currently active)</div>
 				</div>
 			</div>
 		</td>
@@ -549,7 +549,7 @@ if ( !defined('P3_PATH') )
 							<?php printf( '%.3f', $this->profile->averages['plugins'] ); ?>
 						<?php } ?>
 					</div>
-					<div class="p3-callout-caption">( sec. per visit )</div>
+					<div class="p3-callout-caption">(sec. per visit)</div>
 				</div>
 			</div>
 		</td>
@@ -567,7 +567,7 @@ if ( !defined('P3_PATH') )
 							<?php printf( '%.1f%%', $this->profile->averages['plugin_impact'] ); ?>
 						<?php } ?>
 					</div>
-					<div class="p3-callout-caption">( of page load time )</div>
+					<div class="p3-callout-caption">(of page load time)</div>
 				</div>
 			</div>
 		</td>
@@ -607,7 +607,7 @@ if ( !defined('P3_PATH') )
 	<br />
 	<div>
 		<input type="checkbox" id="p3-disable-opcode-cache" <?php if ( true == get_option( 'p3-profiler_disable_opcode_cache' ) ) : ?>checked="checked"<?php endif; ?> />
-		<label for="p3-disable-opcode-cache">Attempt to disable opcode caches <em>( recommended )</em></label>
+		<label for="p3-disable-opcode-cache">Attempt to disable opcode optimizers <em>( recommended )</em></label>
 		<br />
 		<em class="p3-em">This can increase accuracy in plugin detection, but decrease accuracy in timing</em>
 	</div>

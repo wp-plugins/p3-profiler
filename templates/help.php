@@ -222,11 +222,11 @@ if ( !defined('P3_PATH') )
 <div class="p3-question">
 	<h2 class="p3-help-question">What can interfere with testing?</h2>
 	<blockquote>
-		Opcode caches can interfere with PHP backtraces. Leaving opcode caches turned on will result in timing that more accurately
+		Opcode optimizers can interfere with PHP backtraces. Leaving opcode optimizers turned on will result in timing that more accurately
 		reflects your site's real performance, but the function calls to plugins may be "optimized" out of the backtraces and some
 		plugins (especially those with only one hook) might not show up. Disabling opcode caches results in slower times, but shows all plugins.
 		<br /><br />
-		By default, this plugin attempts to clear any opcode caches before it runs. You can change this setting by clicking "Advanced
+		By default, this plugin attempts to disable any detected opcode optimizers when it runs. You can change this setting by clicking "Advanced
 		Settings" under "Start Scan." 
 		<br /><br />
 		Caching plugins that have an option to disable caches for logged in users will not give you the same performance profile that
