@@ -418,7 +418,7 @@ if ( !defined('P3_PATH') )
 								</td>
 								<td><?php echo $entry['recording'] ? 'true' : 'false'; ?></td>
 								<td><?php echo $entry['disable_optimizers'] ? 'true' : 'false'; ?></td>
-								<td><a href="<?php echo $entry['url'];?>" target="_blank"><?php echo htmlentities( $entry['url'] ); ?></a></td>
+								<td><?php echo htmlentities( $entry['url'] ); ?></td><?php // URL intentionally not clickable to avoid accidental replay attacks ?>
 								<td><?php echo $entry['visitor_ip']; ?></td>
 								<td><?php echo human_time_diff( $entry['time'] ) . ' ' . __('ago'); ?></td>
 								<td><?php echo $entry['pid']; ?></td>
