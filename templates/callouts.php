@@ -211,7 +211,7 @@ if ( !defined('P3_PATH') )
 			'resizable' : false,
 			'modal' : true,
 			'width' : 450,
-			'height' : 420,
+			'height' : 425,
 			'title' : "Advanced Settings",
 			'buttons' :
 			[
