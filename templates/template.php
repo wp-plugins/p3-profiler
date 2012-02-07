@@ -70,8 +70,8 @@ if ( 'current-scan' == $this->action || !empty( $_REQUEST['current_scan'] ) ) {
 		<input type="radio" name="p3-nav" id="button-help" <?php echo $button_help_checked; ?> /><label for="button-help">Help</label>
 		
 		<div id="p3-scan-label">
-			<?php if ( !empty( $profile ) ) : ?>
-				Scan name: <?php echo $profile->profile_name; ?>
+			<?php if ( !empty( $this->profile ) ) : ?>
+				Scan name: <?php echo $this->profile->profile_name; ?>
 			<?php endif; ?>
 		</div>
 	</div>

@@ -46,6 +46,9 @@ if ( is_admin() ) {
 	
 	// Upgrade routine
 	add_action( 'admin_init', array( $p3_profiler_plugin, 'upgrade' ) );
+	
+	// Figure out the action
+	add_action( 'admin_init', array( $p3_profiler_plugin, 'action_init' ) );
 
 	// Ajax actions
 	add_action( 'wp_ajax_p3_start_scan', array( $p3_profiler_plugin, 'ajax_start_scan' ) );
@@ -209,15 +212,11 @@ class P3_Profiler_Plugin {
 		wp_enqueue_style( 'p3_qtip_css', plugins_url() . '/p3-profiler/css/jquery.qtip.min.css' );
 		wp_enqueue_style( 'p3_css', plugins_url() . '/p3-profiler/css/p3.css' );
 	}
-	
+
 	/**
-	 * Load the necessary resources
-	 * @uses wp_enqueue_script
-	 * @uses jquery, jquery-ui, jquery.corners
-	 * @uses flot, flot.pie
-	 * @return void
+	 * Determine the action from the query string that guides the exection path
 	 */
-	public function early_init() {
+	public function action_init() {
 
 		// Only for our page
 		if ( isset( $_REQUEST['page'] ) && basename( __FILE__ ) == $_REQUEST['page'] ) {
@@ -239,6 +238,25 @@ class P3_Profiler_Plugin {
 				}
 				$this->scan = P3_PROFILES_PATH . "/{$this->scan}";
 			}
+			
+			// Download the debug logs before output is sent
+			if ( 'download-debug-log' == $this->action ) {
+				$this->download_debug_log();
+			}
+		}
+	}
+	
+	/**
+	 * Load the necessary resources
+	 * @uses wp_enqueue_script
+	 * @uses jquery, jquery-ui, jquery.corners
+	 * @uses flot, flot.pie
+	 * @return void
+	 */
+	public function early_init() {
+
+		// Only for our page
+		if ( isset( $_REQUEST['page'] ) && basename( __FILE__ ) == $_REQUEST['page'] ) {
 
 			// If there's a scan, create a viewer object
 			if ( !empty( $this->scan ) ) {
@@ -290,6 +308,9 @@ class P3_Profiler_Plugin {
 				break;
 			case 'help' :
 				$this->show_help();
+				break;
+			case 'clear-debug-log' :
+				$this->clear_debug_log();
 				break;
 			default :
 				$this->scan_settings_page();
@@ -418,7 +439,16 @@ class P3_Profiler_Plugin {
 		update_option( 'p3-profiler_cache_buster', 'true' == $_POST['p3_cache_buster'] );
 		update_option( 'p3-profiler_use_current_ip', 'true' == $_POST['p3_use_current_ip'] );
 		update_option( 'p3-profiler_ip_address', $_POST['p3_ip_address'] );
-	
+		update_option( 'p3-profiler_debug', $_POST['p3_debug'] );
+
+		// Clear the debug log if it's full
+		if ( 'true' === $_POST['p3_debug'] ) {
+			$log = get_option( 'p3-profiler_debug_log' );
+			if ( is_array( $log ) && count( $log ) >= 100  ) {
+				update_option( 'p3-profiler_debug_log', array() );
+			}
+		}
+
 		die( '1' );
 	}
 	
@@ -490,6 +520,63 @@ class P3_Profiler_Plugin {
 	 */
 	public function show_help() {
 		include_once P3_PATH . '/templates/template.php';
+	}
+
+	
+	/**************************************************************/
+	/** DEBUG LOG FUNCTIONS                                      **/
+	/**************************************************************/
+	
+	/**
+	 * Clear the debug log
+	 */
+	public function clear_debug_log() {
+		if ( !check_admin_referer( 'p3-clear-debug-log' ) ) {
+			wp_die( 'Invalid access' );
+		}
+		update_option( 'p3-profiler_debug_log', array() );
+		wp_redirect( add_query_arg( array( 'p3_action' => 'help' ) ) );
+	}
+	
+	/**
+	 * Download the debug log
+	 */
+	public function download_debug_log() {
+		if ( !check_admin_referer( 'p3-download-debug-log' ) ) {
+			wp_die( 'Invalid access' );
+		}
+		$log = get_option( 'p3-profiler_debug_log' );
+		if ( empty( $log ) ) {
+			$log = array();
+		}
+		header('Pragma: public');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate, post-check=0, pre-check=0'); 
+		header('Content-Type: application/force-download');
+		header('Content-Type: application/octet-stream');
+		header('Content-Type: application/download');
+		header('Content-Disposition: attachment; filename="p3debug.csv";');
+		header('Content-Transfer-Encoding: binary');
+		
+		// File header
+		echo '"Profiling Enabled","Recording IP","Scan Name","Recording","Disable Optimizers","URL","Visitor IP","Time","PID"' . "\n";
+
+		foreach ( (array) $log as $entry ) {
+			printf('"%s","%s","%s","%s","%s","%s","%s","%s","%d"' . "\n",
+				$entry['profiling_enabled'] ? 'true' : 'false',
+				$entry['recording_ip'],
+				$entry['scan_name'],
+				$entry['recording'] ? 'true' : 'false',
+				$entry['disable_optimizers'] ? 'true' : 'false',
+				$entry['url'],
+				$entry['visitor_ip'],
+				date( 'Y-m-d H:i:s', $entry['time'] ),
+				$entry['pid']
+			);
+		}
+
+		// Done
+		die();
 	}
 
 
@@ -698,6 +785,8 @@ class P3_Profiler_Plugin {
 				delete_option( 'p3-profiler_version' );
 				delete_option( 'p3-profiler_cache_buster' );
 				delete_option( 'p3-profiler_profiling_enabled' );
+				delete_option( 'p3-profiler_debug' );
+				delete_option( 'p3_profiler_debug_log' );
 			}
 			restore_current_blog();
 		} else {
@@ -710,6 +799,8 @@ class P3_Profiler_Plugin {
 			delete_option( 'p3-profiler_version' );
 			delete_option( 'p3-profiler_cache_buster' );
 			delete_option( 'p3-profiler_profiling_enabled' );
+			delete_option( 'p3-profiler_debug' );
+			delete_option( 'p3_profiler_debug_log' );
 		}
 	}
 
@@ -753,6 +844,8 @@ class P3_Profiler_Plugin {
 		delete_option( 'p3-profiler_version' );
 		delete_option( 'p3-profiler_cache_buster' );
 		delete_option( 'p3-profiler_profiling_enabled' );
+		delete_option( 'p3-profiler_debug' );
+		delete_option( 'p3_profiler_debug_log' );
 	}
 
 	/**
@@ -796,6 +889,8 @@ class P3_Profiler_Plugin {
 			// Set profiling option
 			update_option( 'p3-profiler_profiling_enabled', false );
 			update_option( 'p3-profiler_version', '1.2.0' );
+			update_option( 'p3-profiler_debug', false );
+			update_option( 'p3_profiler_debug_log', array() );
 		}
 
 		// Ensure the profiles folder is there

@@ -49,6 +49,7 @@ if ( !defined('P3_PATH') )
 				'p3_ip' : jQuery( '#p3-advanced-ip' ).val(),
 				'p3_disable_opcode_cache' : jQuery( '#p3-disable-opcode-cache' ).prop( 'checked' ),
 				'p3_cache_buster' : jQuery( '#p3-cache-buster' ).prop( 'checked' ),
+				'p3_debug' : jQuery( '#p3-debug' ).prop( 'checked' ),
 				'p3_scan_name' : jQuery( "#p3-scan-name" ).val(),
 				'action' : 'p3_start_scan',
 				'p3_nonce' : jQuery( "#p3_nonce" ).val()
@@ -106,6 +107,7 @@ if ( !defined('P3_PATH') )
 				'p3_ip' : jQuery( '#p3-advanced-ip' ).val(),
 				'p3_disable_opcode_cache' : jQuery( '#p3-disable-opcode-cache' ).prop( 'checked' ),
 				'p3_cache_buster' : jQuery( '#p3-cache-buster' ).prop( 'checked' ),
+				'p3_debug' : jQuery( '#p3-debug' ).prop( 'checked' ),
 				'p3_scan_name' : jQuery( "#p3-scan-name" ).val(),
 				'action' : 'p3_start_scan',
 				'p3_nonce' : jQuery( "#p3_nonce" ).val()
@@ -209,7 +211,7 @@ if ( !defined('P3_PATH') )
 			'resizable' : false,
 			'modal' : true,
 			'width' : 450,
-			'height' : 340,
+			'height' : 420,
 			'title' : "Advanced Settings",
 			'buttons' :
 			[
@@ -225,6 +227,7 @@ if ( !defined('P3_PATH') )
 							'p3_use_current_ip' : $( '#p3-use-current-ip' ).prop( 'checked' ),
 							'p3_ip_address' : $( '#p3-advanced-ip' ).val(),
 							'p3_cache_buster' : $( '#p3-cache-buster' ).prop( 'checked' ),
+							'p3_debug' : $( '#p3-debug' ).prop( 'checked' ),
 							'p3_nonce' : '<?php echo wp_create_nonce( 'p3_save_settings' ); ?>'
 						}
 						$.post( ajaxurl, data, function( response ) {
@@ -375,6 +378,7 @@ if ( !defined('P3_PATH') )
 				'p3_ip' : jQuery( '#p3-advanced-ip' ).val(),
 				'p3_disable_opcode_cache' : jQuery( '#p3-disable-opcode-cache' ).prop( 'checked' ),
 				'p3_cache_buster' : jQuery( '#p3-cache-buster' ).prop( 'checked' ),
+				'p3_debug' : jQuery( '#p3-debug' ).prop( 'checked' ),
 				'p3_scan_name' : jQuery( "#p3-scan-name" ).val(),
 				'action' : 'p3_start_scan',
 				'p3_nonce' : jQuery( "#p3_nonce" ).val()
@@ -616,7 +620,14 @@ if ( !defined('P3_PATH') )
 		<input type="checkbox" id="p3-cache-buster" <?php if ( true == get_option( 'p3-profiler_cache_buster' ) ) : ?>checked="checked"<?php endif; ?> />
 		<label for="p3-cache-buster">Attempt to circumvent browser cache</label>
 		<br />
-		<em class="p3-em">This may help fix a "No visits recorded" error message.  See the <a href="<?php echo add_query_arg( array( 'p3_action' => 'help', 'current_scan' => null ) ); ?>#q-circumvent-cache">help</a> page for details.</em>
+		<em class="p3-em">This may help fix a "No visits recorded" error message.  See the <a href="<?php echo add_query_arg( array( 'p3_action' => 'help', 'current_scan' => null ) ); ?>#q-debug-log">help</a> page for details.</em>
+	</div>
+	<br />
+	<div>
+		<input type="checkbox" id="p3-debug" <?php if ( true == get_option( 'p3-profiler_debug' ) ) : ?>checked="checked"<?php endif; ?> />
+		<label for="p3-debug">Debug mode</label>
+		<br />
+		<em class="p3-em">This will log the last 100 visits.  Check the <a href="<?php echo add_query_arg( array( 'p3_action' => 'help', 'current_scan' => null ) ); ?>#q-debug-log">help</a> page to view log messages.</em>
 	</div>
 </div>
 

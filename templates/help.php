@@ -31,11 +31,25 @@ if ( !defined('P3_PATH') )
 				$( this ).html( "Hide" );
 			}
 		});
-		// $( "#p3-hide-glossary" ).trigger( "click" );
-		$( "#p3-glossary-container" ).dblclick( function() {
-			$( "#p3-hide-glossary" ).trigger( "click" );
-		});
 		
+
+		// Debug log
+		$( "#p3-hide-debug-log" ).click( function() {
+			if ( "Hide" == $( this ).html() ) {
+				$( "#p3-debug-log-table thead" ).hide();
+				$( "#p3-debug-log-table tbody" ).hide();
+				$( "#p3-debug-log-table tfoot" ).hide();
+				$( this ).html( "Show" );
+			} else {
+				$( "#p3-debug-log-table thead" ).show();
+				$( "#p3-debug-log-table tbody" ).show();
+				$( "#p3-debug-log-table tfoot" ).show();
+				$( this ).html( "Hide" );
+			}
+		});
+		$( "#p3-debug-log-container table tbody tr:even ").addClass( "even" );
+
+
 		// Automatically create the table of contents
 		var links = [];
 		var i = 1;
@@ -237,6 +251,50 @@ if ( !defined('P3_PATH') )
 </div>
 
 <div class="p3-question">
+	<h2 class="p3-help-question" data-question-id="q-opcode-optimizer">Is my site using an opcode optimizer?</h2>
+	<blockquote>
+		<?php $detected = 0; if ( extension_loaded( 'xcache' ) ) { $detected++; ?>
+			Your site is using XCache.  Although XCache reports that no opcode optimization won't be implemented until
+			version 2.0, this has been known to cause problems with P3.<br />
+		<?php } ?>	
+		<?php if ( extension_loaded( 'apc' ) ) { $detected++; ?>
+			Your site is using APC.  This has not been known to cause problems with P3.<br />
+		<?php } ?>
+		<?php if ( true or extension_loaded( 'eaccelerator' ) && ini_get( 'eaccelerator.optimizer' ) ) { $detected++; ?>
+			Your site is using eaccelerator with optimization enabled.  This has been known to cause problems with P3.  To temporarily
+			disable the optimizer
+			<?php if ( false and 'apache2handler' == strtolower( php_sapi_name() ) ) { ?>
+				you can add <code>php_flag eaccelerator.optimizer Off</code> to your site's .htaccess file.
+			<?php } elseif ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) { ?>
+				you can add <code>eaccelerator.optimizer = 0</code> to your site's <a href="http://php.net/manual/en/configuration.file.per-user.php" target="_blank"><?php echo ini_get( 'user_ini.filename' ); ?> file</a>.
+			<?php } else { ?>
+				you can ask your hosting provider.
+			<?php } ?>
+			<br />
+		<?php } ?>
+		<?php if ( extension_loaded( 'Zend Optimizer+' ) && ini_get( 'zend_optimizerplus.optimization_level' ) > 0 ) { $detected++; ?>
+			Your site is using Zend Optimizer+.  This has not been known to cause problems with P3.<br />
+		<?php } ?>
+		<?php if ( extension_loaded( 'IonCube Loader' ) ) { $detected++; ?>
+			Your site is using the IonCube loader.  This has not been known to cause problems with P3. <br />
+		<?php } ?>
+		<?php if ( extension_loaded( 'wincache' ) ) { $detected++; ?>
+			Your site is using wincache.  This has not been known to cause problems with P3. <br />
+		<?php } ?>
+		<?php if ( extension_loaded( 'Zend Guard Loader' ) ) { $detected++; ?>
+			Your site is using the Zend Guard loader.  This has not been known to cause problems with P3. <br />
+		<?php } ?>
+		<?php if ( extension_loaded( 'Zend Optimizer' ) ) { $detected++; ?>
+			Your site is using the Zend Optimizer.  This extension has not been tested with P3.  Please report any problems.<br />
+		<?php } ?>
+		<?php if ( !$detected ) { ?>
+			Your site is not using any opcode optimizers that have been detected by P3.
+		<?php } ?>
+	</blockquote>
+</div>
+
+
+<div class="p3-question">
 	<h2 class="p3-help-question">How much room do these profiles take up on my server</h2>
 	<blockquote>
 		<?php
@@ -310,6 +368,82 @@ if ( !defined('P3_PATH') )
 	</blockquote>
 </div>
 
+<div class="p3-question">
+	<h2 class="p3-help-question" data-question-id="q-debug-log">Where can I view the debug log?</h2>
+	<blockquote>
+		Debug mode will record 100 visits to your site, then turn off automatically.  You can view the log below.  The entries
+		are shown in reverse order with the latest visits appearing at the top of the list.  You can also
+		<a href="<?php echo wp_nonce_url( add_query_arg( array( 'p3_action' => 'clear-debug-log' ) ), 'p3-clear-debug-log' ) ; ?>" class="button-secondary">Clear the log</a> or
+		<a href="<?php echo wp_nonce_url( add_query_arg( array( 'p3_action' => 'download-debug-log' ) ), 'p3-download-debug-log' ) ; ?>" class="button-secondary">Download the log</a> as a CSV.
+		<br /><br />
+		<div id="p3-debug-log-container">
+			<div class="ui-widget-header" id="p3-debug-log-header" style="padding: 8px;">
+				<strong>Debug Log</strong>
+				<div style="position: relative; top: 0px; right: 80px; float: right;">
+					<a href="javascript:;" id="p3-hide-debug-log">Hide</a>
+				</div>
+			</div>
+			<div>
+				<table class="p3-results-table" id="p3-debug-log-table" cellpadding="0" cellspacing="0" border="0">
+					<thead>
+						<tr>
+							<td><strong>#</strong></td>
+							<td><strong>Profiling Enabled</strong></td>
+							<td><strong>Recording IP</strong></td>
+							<td><strong>Scan Name</strong></td>
+							<td><strong>Recording</strong></td>
+							<td><strong>Disable Optimizers</strong></td>
+							<td><strong>URL</strong></td>
+							<td><strong>Visitor IP</strong></td>
+							<td><strong>Time</strong></td>
+							<td><strong>PID</strong></td>
+						</tr>
+					</thead>
+					<tbody>
+						<?php $log = get_option( 'p3-profiler_debug_log' ); $c = count( $log ); foreach ( $log as $entry ) : ?>
+							<tr>
+								<td><?php echo $c--; ?></td>
+								<td><?php echo $entry['profiling_enabled'] ? 'true' : 'false'; ?></td>
+								<td><?php echo $entry['recording_ip']; ?></td>
+								<td>
+								<?php if ( file_exists(P3_PROFILES_PATH . '/' . $entry['scan_name'] . '.json' ) ) : ?>
+									<a href="<?php echo add_query_arg( array(
+										'p3_action'    => 'view-scan',
+										'current-scan' => null,
+										'name'         => $entry['scan_name'] . '.json'
+									) ); ?>"><?php echo $entry['scan_name']; ?></a>
+								<?php else : ?>
+									<?php echo $entry['scan_name']; ?>
+								<?php endif; ?>
+								</td>
+								<td><?php echo $entry['recording'] ? 'true' : 'false'; ?></td>
+								<td><?php echo $entry['disable_optimizers'] ? 'true' : 'false'; ?></td>
+								<td><a href="<?php echo $entry['url'];?>" target="_blank"><?php echo htmlentities( $entry['url'] ); ?></a></td>
+								<td><?php echo $entry['visitor_ip']; ?></td>
+								<td><?php echo human_time_diff( $entry['time'] ) . ' ' . __('ago'); ?></td>
+								<td><?php echo $entry['pid']; ?></td>
+							</tr>
+						<?php endforeach ; ?>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td><strong>#</strong></td>
+							<td><strong>Profiling Enabled</strong></td>
+							<td><strong>Recording IP</strong></td>
+							<td><strong>Scan Name</strong></td>
+							<td><strong>Recording</strong></td>
+							<td><strong>Disable Optimizers</strong></td>
+							<td><strong>URL</strong></td>
+							<td><strong>Visitor IP</strong></td>
+							<td><strong>Time</strong></td>
+							<td><strong>PID</strong></td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</blockquote>
+</div>
 
 <div class="p3-question">
 	<h2 class="p3-help-question">What if I get a warning about usort()?</h2>
