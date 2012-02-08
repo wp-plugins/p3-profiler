@@ -887,9 +887,9 @@ class P3_Profiler_Plugin {
 			}
 
 			// Set profiling option
-			update_option( 'p3-profiler_profiling_enabled', false );
+			add_option( 'p3-profiler_profiling_enabled', false, false, true );
 			update_option( 'p3-profiler_version', '1.2.0' );
-			update_option( 'p3-profiler_debug', false );
+			add_option( 'p3-profiler_debug', false, false, true );
 			update_option( 'p3_profiler_debug_log', array() );
 		}
 

@@ -160,9 +160,8 @@ class P3_Profiler {
 			array_unshift( $debug_log, $debug_entry );
 			if ( count( $debug_log ) >= 100 ) {
 				add_action( 'shutdown', array( $this, 'disable_debug' ) );
-			} else {
-				update_option( 'p3-profiler_debug_log', $debug_log );
 			}
+			update_option( 'p3-profiler_debug_log', $debug_log );
 		}
 		if ( !defined( 'WPP_PROFILING_STARTED' ) ) {
 			return $this;
