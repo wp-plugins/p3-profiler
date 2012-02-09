@@ -2,7 +2,7 @@
 /*
 Plugin Name: P3 (Plugin Performance Profiler)
 Plugin URI: http://support.godaddy.com/godaddy/wordpress-p3-plugin/
-Description: See which plugins are slowing down your site.  Create a profile of your WordPress site's plugins' performance by measuring their impact on your site's load time.
+Description: See which plugins are slowing down your site.  Create a profile of your WordPress site's plugins' performance by measuring their impact onÂ your site's load time.
 Author: GoDaddy.com
 Version: 1.2.0
 Author URI: http://www.godaddy.com/
@@ -46,7 +46,7 @@ if ( is_admin() ) {
 	
 	// Upgrade routine
 	add_action( 'admin_init', array( $p3_profiler_plugin, 'upgrade' ) );
-	
+
 	// Figure out the action
 	add_action( 'admin_init', array( $p3_profiler_plugin, 'action_init' ) );
 
@@ -242,6 +242,8 @@ class P3_Profiler_Plugin {
 			// Download the debug logs before output is sent
 			if ( 'download-debug-log' == $this->action ) {
 				$this->download_debug_log();
+			} elseif ( 'clear-debug-log' == $this->action ) {
+				$this->clear_debug_log();
 			}
 		}
 	}
@@ -308,9 +310,6 @@ class P3_Profiler_Plugin {
 				break;
 			case 'help' :
 				$this->show_help();
-				break;
-			case 'clear-debug-log' :
-				$this->clear_debug_log();
 				break;
 			default :
 				$this->scan_settings_page();
@@ -439,7 +438,7 @@ class P3_Profiler_Plugin {
 		update_option( 'p3-profiler_cache_buster', 'true' == $_POST['p3_cache_buster'] );
 		update_option( 'p3-profiler_use_current_ip', 'true' == $_POST['p3_use_current_ip'] );
 		update_option( 'p3-profiler_ip_address', $_POST['p3_ip_address'] );
-		update_option( 'p3-profiler_debug', $_POST['p3_debug'] );
+		update_option( 'p3-profiler_debug', 'true' == $_POST['p3_debug'] );
 
 		// Clear the debug log if it's full
 		if ( 'true' === $_POST['p3_debug'] ) {
@@ -747,6 +746,12 @@ class P3_Profiler_Plugin {
 	 * @return void
 	 */
 	public function deactivate() {
+		global $p3_profiler;
+
+		// Unhook the profiler
+		update_option( 'p3-profiler_debug', false );
+		update_option( 'p3-profiler_debug_log', array() );
+		remove_action( 'shutdown', array( $p3_profiler, 'shutdown_handler' ) );
 
 		// Remove mu-plugin
 		if ( file_exists( WPMU_PLUGIN_DIR . '/p3-profiler.php' ) ) {
@@ -764,6 +769,13 @@ class P3_Profiler_Plugin {
 	 * @return void
 	 */
 	public static function uninstall() {
+		global $p3_profiler;
+
+		// Unhook the profiler
+		update_option( 'p3-profiler_debug', false );
+		update_option( 'p3-profiler_debug_log', array() );
+		remove_action( 'shutdown', array( $p3_profiler, 'shutdown_handler' ) );
+
 		// This is a static function so it needs an instance
 		// Since I'm myself, I can call my own private methods
 		$class = __CLASS__;
@@ -786,7 +798,7 @@ class P3_Profiler_Plugin {
 				delete_option( 'p3-profiler_cache_buster' );
 				delete_option( 'p3-profiler_profiling_enabled' );
 				delete_option( 'p3-profiler_debug' );
-				delete_option( 'p3_profiler_debug_log' );
+				delete_option( 'p3-profiler_debug_log' );
 			}
 			restore_current_blog();
 		} else {
@@ -800,7 +812,7 @@ class P3_Profiler_Plugin {
 			delete_option( 'p3-profiler_cache_buster' );
 			delete_option( 'p3-profiler_profiling_enabled' );
 			delete_option( 'p3-profiler_debug' );
-			delete_option( 'p3_profiler_debug_log' );
+			delete_option( 'p3-profiler_debug_log' );
 		}
 	}
 
@@ -845,7 +857,7 @@ class P3_Profiler_Plugin {
 		delete_option( 'p3-profiler_cache_buster' );
 		delete_option( 'p3-profiler_profiling_enabled' );
 		delete_option( 'p3-profiler_debug' );
-		delete_option( 'p3_profiler_debug_log' );
+		delete_option( 'p3-profiler_debug_log' );
 	}
 
 	/**
@@ -857,7 +869,7 @@ class P3_Profiler_Plugin {
 
 		// Get the current version
 		$version = get_option( 'p3-profiler_version' );
-		
+
 		// Upgrading from < 1.1.0
 		if ( empty( $version ) || version_compare( $version, '1.1.0' ) < 0 ) {
 			update_option( 'p3-profiler_disable_opcode_cache', true );
@@ -867,13 +879,19 @@ class P3_Profiler_Plugin {
 		}
 		
 		// Upgrading from < 1.1.2
-		elseif ( version_compare( $version, '1.1.2' ) < 0 ) {
+		if ( empty( $version) || version_compare( $version, '1.1.2' ) < 0 ) {
 			update_option( 'p3-profiler_cache_buster', true );
 			update_option( 'p3-profiler_version', '1.1.2' );
 		}
 
 		// Upgrading from < 1.2.0
-		elseif ( version_compare( $version, '1.2.0' ) < 0 ) {
+		if ( empty( $version) || version_compare( $version, '1.2.0' ) < 0 ) {
+
+			// Set profiling option
+			update_option( 'p3-profiler_profiling_enabled', false );
+			update_option( 'p3-profiler_version', '1.2.0' );
+			update_option( 'p3-profiler_debug', false );
+			update_option( 'p3-profiler_debug_log', array() );
 
 			// Remove any .htaccess modifications
 			$file = ABSPATH . '/.htaccess';
@@ -885,12 +903,6 @@ class P3_Profiler_Plugin {
 			if ( file_exists( P3_PATH . '/.profiling_enabled' ) ) {
 				@unlink( P3_PATH . '/.profiling_enabled' );
 			}
-
-			// Set profiling option
-			add_option( 'p3-profiler_profiling_enabled', false, false, true );
-			update_option( 'p3-profiler_version', '1.2.0' );
-			add_option( 'p3-profiler_debug', false, false, true );
-			update_option( 'p3_profiler_debug_log', array() );
 		}
 
 		// Ensure the profiles folder is there

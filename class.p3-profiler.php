@@ -86,6 +86,12 @@ class P3_Profiler {
 	 * @var string
 	 */
 	private $_P3_PATH = ''; // Cannot rely on P3_PATH, may be instantiated before the plugin
+
+	/**
+	 * Debug log entry
+	 * @var array
+	 */
+	private $_debug_entry = array();
 	
 	/**
 	 * Last stack should be marked as plugin time
@@ -117,34 +123,28 @@ class P3_Profiler {
 		$this->_P3_PATH      = realpath( dirname( __FILE__ ) );
 
 		// Debug mode
-		if ( get_option( 'p3-profiler_debug' ) ) {
-			$debug_log = get_option( 'p3-profiler_debug_log' );
-			if ( empty( $debug_log) ) {
-				$debug_log = array();
-			}
-			$debug_entry = array(
-				'profiling_enabled'  => false,
-				'recording_ip'       => '',
-				'scan_name'          => '',
-				'recording'          => false,
-				'disable_optimizers' => false,
-				'url'                => $this->_get_url(),
-				'visitor_ip'         => $this->get_ip(),
-				'time'               => time(),
-				'pid'                => getmypid()
-			);
-		}
+		$this->_debug_entry = array(
+			'profiling_enabled'  => false,
+			'recording_ip'       => '',
+			'scan_name'          => '',
+			'recording'          => false,
+			'disable_optimizers' => false,
+			'url'                => $this->_get_url(),
+			'visitor_ip'         => $this->get_ip(),
+			'time'               => time(),
+			'pid'                => getmypid()
+		);
 
 		// Check to see if we should profile
 		$opts = array();
 		if ( function_exists( 'get_option') ) {
 			$opts = get_option('p3-profiler_profiling_enabled');
 			if ( !empty( $opts ) ) {
-				if ( isset( $debug_entry ) ) {
-					$debug_entry['profiling_enabled']  = true;
-					$debug_entry['scan_name']          = $opts['name'];
-					$debug_entry['recording_ip']       = $opts['ip'];
-					$debug_entry['disable_optimizers'] = $opts['disable_opcode_cache'];
+				if ( isset( $this->_debug_entry ) ) {
+					$this->_debug_entry['profiling_enabled']  = true;
+					$this->_debug_entry['scan_name']          = $opts['name'];
+					$this->_debug_entry['recording_ip']       = $opts['ip'];
+					$this->_debug_entry['disable_optimizers'] = $opts['disable_opcode_cache'];
 				}
 			}
 		}
@@ -154,15 +154,10 @@ class P3_Profiler {
 			define( 'WPP_PROFILING_STARTED', true );
 		}
 
+		// Save the debug info
+		$this->_debug_entry['recording'] = defined( 'WPP_PROFILING_STARTED' );
+
 		// Check the profiling flag
-		if ( isset( $debug_entry ) ) {
-			$debug_entry['recording'] = defined( 'WPP_PROFILING_STARTED' );
-			array_unshift( $debug_log, $debug_entry );
-			if ( count( $debug_log ) >= 100 ) {
-				add_action( 'shutdown', array( $this, 'disable_debug' ) );
-			}
-			update_option( 'p3-profiler_debug_log', $debug_log );
-		}
 		if ( !defined( 'WPP_PROFILING_STARTED' ) ) {
 			return $this;
 		}
@@ -489,6 +484,11 @@ class P3_Profiler {
 	 */
 	public function shutdown_handler() {
 
+		// Write debug log
+		if ( get_option( 'p3-profiler_debug' ) ) {
+			$this->_write_debug_log();
+		}
+
 		// Make sure we've actually started ( wp-cron??)
 		if ( !defined( 'WPP_PROFILING_STARTED' ) || !WPP_PROFILING_STARTED ) {
 			return;
@@ -666,7 +666,22 @@ class P3_Profiler {
 	/**
 	 * Disable debug mode
 	 */
-	public function disable_debug() {
-		update_option( 'p3-profiler_debug', false );
+	private function _write_debug_log() {
+
+		// Get the existing log
+		$debug_log = get_option( 'p3-profiler_debug_log' );
+		if ( empty( $debug_log) ) {
+			$debug_log = array();
+		}
+
+		// Prepend this entry
+		array_unshift( $debug_log, $this->_debug_entry );
+		if ( count( $debug_log ) >= 100 ) {
+			$debug_log = array_slice( $debug_log, 0, 100 );
+			update_option( 'p3-profiler_debug', false );
+		}
+
+		// Write the log
+		update_option( 'p3-profiler_debug_log', $debug_log );
 	}
 }

@@ -949,7 +949,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 								<em class="p3-em">
 									(<span class="qtip-tip" title="How long the site took to load. This is an observed measurement (start timing
 											when the page was requested, stop timing when the page was delivered to the browser, calculate the
-											difference)."><?php printf( '%.4f', $this->profile->averages['observed'] ); ?> observed<span>,
+											difference)."><?php printf( '%.4f', $this->profile->averages['observed'] ); ?> observed</span>,
 											<span class="qtip-tip" title="The expected site load time calculated by adding plugin load time, core
 											load time, theme load time, and profiler overhead.">
 											<?php printf( '%.4f', $this->profile->averages['expected'] ); ?> expected</span>)
