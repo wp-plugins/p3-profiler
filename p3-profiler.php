@@ -470,9 +470,7 @@ class P3_Profiler_Plugin {
 		// Check fields
 		$to      = sanitize_email( $_POST['p3_to'] );
 		$from    = sanitize_email( $_POST['p3_from'] );
-		$subject = filter_var(
-			$_POST['p3_subject'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES | FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW
-		);
+		$subject = trim( $_POST['p3_subject'] );
 		$message = strip_tags( $_POST['p3_message'] );
 		$results = strip_tags( $_POST['p3_results'] );
 		
@@ -867,6 +865,11 @@ class P3_Profiler_Plugin {
 	 */
 	public function upgrade() {
 
+		// Only for our page
+		if ( !isset( $_REQUEST['page'] ) || basename( __FILE__ ) != $_REQUEST['page'] ) {
+			return;
+		}
+		
 		// Get the current version
 		$version = get_option( 'p3-profiler_version' );
 
