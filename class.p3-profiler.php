@@ -655,9 +655,11 @@ class P3_Profiler {
 			return $ip;
 		} else {
 			if ( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-				$ip = filter_var( $_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_SANITIZE_STRING );
+				$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			} elseif ( !empty ( $_SERVER['HTTP_X_REAL_IP'] ) ) {
+				$ip = $_SERVER['HTTP_X_REAL_IP'];
 			} else {
-				$ip = filter_var( $_SERVER['REMOTE_ADDR'], FILTER_SANITIZE_STRING );
+				$ip = $_SERVER['REMOTE_ADDR'];
 			}
 			return $ip;
 		}
