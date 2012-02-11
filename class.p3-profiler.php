@@ -199,6 +199,7 @@ class P3_Profiler {
 				// XCache seems to do some optimizing, anyway.  The recorded stack size is smaller with xcache.cacher enabled than without.
 			} elseif ( extension_loaded( 'apc' ) ) {
 				@ini_set( 'apc.optimization', 0 ); // Removed in APC 3.0.13 (2007-02-24)
+				apc_clear_cache();
 			} elseif ( extension_loaded( 'eaccelerator' ) ) {
 				@ini_set( 'eaccelerator.optimizer', 0 );
 				if ( function_exists( 'eaccelerator_optimizer' ) ) {
