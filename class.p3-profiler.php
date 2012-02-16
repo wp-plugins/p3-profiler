@@ -589,23 +589,7 @@ class P3_Profiler {
 		// previous profiles
 		$uploads_dir = wp_upload_dir();
 		$path        = $uploads_dir['basedir'] . DIRECTORY_SEPARATOR . 'profiles' . DIRECTORY_SEPARATOR . $this->_profile_filename;
-		$fp          = fopen( $path, 'a+' );
-		$wait        = 30; // Wait 30 iterations ( 3 seconds )
-		while ( !flock( $fp, LOCK_EX ) && $wait-- ) {
-			usleep( 100 * 1000 );
-		}
-
-		// If we've waited too long, bail, don't add this profile, there's too
-		// much traffic
-		if ( $wait <= 0 ) {
-			return;
-		}
-
-		fwrite( $fp, json_encode( $this->_profile ) . PHP_EOL );
-
-		// Release the lock and close the file
-		flock( $fp, LOCK_UN );
-		fclose( $fp );
+		file_put_contents( $path, json_encode( $this->_profile ) . PHP_EOL, FILE_APPEND );
 	}
 	
 	/**
