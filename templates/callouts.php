@@ -453,6 +453,7 @@ if ( !defined('P3_PATH') )
 			location.href = "<?php echo add_query_arg( array( 'p3_action' => 'view-scan', 'current_scan' => '1', 'name' => null ) ); ?>&name=" + $( this ).attr( "data-scan-name" );
 		});
 		$( "#p3-view-incomplete-results-submit" ).click( function() {
+			$( "#p3-view-results-submit" ).attr( "data-scan-name", $( "#p3-view-incomplete-results-submit" ).attr( "data-scan-name" ) );
 			$( "#p3-view-results-submit" ).trigger( "click" );
 		});
 
