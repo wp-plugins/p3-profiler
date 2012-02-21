@@ -315,6 +315,14 @@ class P3_Profiler_Plugin {
 				$this->scan_settings_page();
 		}
 	}
+	
+	/**
+	 * Order terms randomly
+	 * @return string
+	 */
+	public function get_terms_orderby() {
+		return 'rand()';
+	}
 
 	/**
 	 * Get a list of pages for the auto-scanner
@@ -329,19 +337,21 @@ class P3_Profiler_Plugin {
 		$words = array_merge( explode( ' ', get_bloginfo( 'name' ) ), explode( ' ', get_bloginfo( 'description' ) ) );
 		$pages[] = home_url( '?s=' . $words[ mt_rand( 0, count( $words ) - 1 ) ] );
 
-		// Get 5 random tags
-		$terms = get_terms( 'post_tag', 'number=4&orderby=rand()' );
+		// Get 4 random tags
+		add_filter( 'get_terms_orderby', array( $this, 'get_terms_orderby' ) );
+		$terms = get_terms( 'post_tag', 'number=4' );
 		foreach ( (array) $terms as $term ) {
 			$pages[] = get_term_link( $term );
 		}
 
-		// Get 5 random categories
-		$cats = get_terms( 'category', 'number=4&orderby=rand()');
+		// Get 4 random categories
+		$cats = get_terms( 'category', 'number=4');
 		foreach ( (array) $cats as $cat ) {
 			$pages[] = get_term_link( $cat );
 		}
-
-		// Get the latest 5 posts
+		remove_filter( 'get_terms_orderby', array( $this, 'get_terms_orderby' ) );
+		
+		// Get the latest 4 posts
 		$tmp = preg_split( '/\s+/', wp_get_archives( 'type=postbypost&limit=4&echo=0' ) );
 		if ( !empty( $tmp ) ) {
 			foreach ( $tmp as $page ) {
