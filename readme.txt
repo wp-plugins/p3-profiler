@@ -3,7 +3,7 @@ Contributors: Godaddy, StarfieldTech
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 3.3.1
-Stable tag: 1.1.3
+Stable tag: 1.2.0
 
 See which plugins are slowing down your site.  This plugin creates a performance report for your site.
 
@@ -43,6 +43,9 @@ Manual installation:
 
 == Upgrade Notice ==
 
+= 1.2.0 =
+Many compatibility fixes based on user feedback.  Upgrading is recommended.
+
 = 1.1.3 =
 Fixed a regression bug re-introduced in v 1.1.2.  Thanks to user adamf for finding this so quickly!
 
@@ -75,6 +78,27 @@ We love to make P3 better.  When reporting a bug, please visit this page so we c
 Thanks!
 
 == Changelog ==
+
+= 1.2.0 =
+ * Remove .profiling_enabled file, store profiling flag as a WordPress option
+ * Remove code that writes to .htaccess file
+ * Removed fix-flag-file page, no longer necessary
+ * Added a link to the "no visits recorded" message pointing to the help page
+ * Bugfix - with the manual profile "I'm done" button not showing the intended scan
+ * On upgrade, remove .htaccess auto_prepend_file code
+ * On upgrade, delete .profiling_enabled file
+ * Include a data point for all visits for all plugins on the detailed chart (If no data point exists, mark it as 0 to keep the line connected)
+ * Add Debug log feature to help diagnose why scans aren't recording properly on some sites
+ * Opcode optimizer detection / documentation
+ * Opcode optimizer compatibility
+ * Update the list of random URLs to scan - use 4 random categories, 4 random tags, 4 random posts, a random search word from the blog description, and the home page
+ * Don't include the site's RSS feed in the automated scan, it's causing problems in some browsers which expect the feed to be loaded as a document
+ * Support HTTP_X_REAL_IP
+ * Remove file locking, it's preventing the profiles from being saved on some hosts
+ * Removing calls to filter_var, some 5.2.x builds use --disable-filter so this isn't reliable
+ * Bugfix - Pausing a scan and clicking "View results" showed an error message
+ * Bugfix - Avoid using "../" for compatibility with open_basedir
+ * Upgrade routine was being done in the wrong order
 
 = 1.1.3 =
  * Bugfix - regression bug re-introduced in v 1.1.2.  Thanks to user adamf for finding this so quickly!
