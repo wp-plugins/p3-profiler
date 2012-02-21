@@ -117,7 +117,7 @@ class P3_Profiler_Plugin {
 	 */
 	public function remove_admin_bar() {
 		if ( !is_admin() && is_user_logged_in() ) {
-			remove_action( 'wp_footer', 'wp_admin_bar_render', 1000 );
+			remove_action( 'init', '_wp_admin_bar_init' );
 			if ( true === force_ssl_admin() ) {
 				add_filter( 'site_url', array( $this, '_fix_url' ) );
 				add_filter( 'admin_url', array( $this, '_fix_url' ) );
@@ -325,14 +325,24 @@ class P3_Profiler_Plugin {
 		// Start off the scan with the home page
 		$pages = array( get_home_url() ); // Home page
 
-		// Get the default RSS feed
-		$pages[] = get_feed_link();
+		// Search for a word from the blog description
+		$words = array_merge( explode( ' ', get_bloginfo( 'name' ) ), explode( ' ', get_bloginfo( 'description' ) ) );
+		$pages[] = home_url( '?s=' . $words[ mt_rand( 0, count( $words ) - 1 ) ] );
 
-		// Search for 'e'
-		$pages[] = home_url( '?s=e' );
+		// Get 5 random tags
+		$terms = get_terms( 'post_tag', 'number=4&orderby=rand()' );
+		foreach ( (array) $terms as $term ) {
+			$pages[] = get_term_link( $term );
+		}
 
-		// Get the latest 10 posts
-		$tmp = preg_split( '/\s+/', wp_get_archives( 'type=postbypost&limit=10&echo=0' ) );
+		// Get 5 random categories
+		$cats = get_terms( 'category', 'number=4&orderby=rand()');
+		foreach ( (array) $cats as $cat ) {
+			$pages[] = get_term_link( $cat );
+		}
+
+		// Get the latest 5 posts
+		$tmp = preg_split( '/\s+/', wp_get_archives( 'type=postbypost&limit=4&echo=0' ) );
 		if ( !empty( $tmp ) ) {
 			foreach ( $tmp as $page ) {
 				if ( preg_match( "/href='([^']+)'/", $page, $matches ) ) {
@@ -694,7 +704,7 @@ class P3_Profiler_Plugin {
 		}
 
 		// mu-plugins doesn't exist	
-		if ( !file_exists( WPMU_PLUGIN_DIR ) && is_writable( WPMU_PLUGIN_DIR . '/../' ) ) {
+		if ( !file_exists( WPMU_PLUGIN_DIR ) && is_writable( dirname( WPMU_PLUGIN_DIR ) ) ) {
 			wp_mkdir_p( WPMU_PLUGIN_DIR );
 		}
 		if ( file_exists( WPMU_PLUGIN_DIR ) && is_writable( WPMU_PLUGIN_DIR ) ) {
