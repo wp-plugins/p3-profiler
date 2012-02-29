@@ -164,11 +164,6 @@ if ( !defined('P3_PATH') )
 <div class="p3-question">
 	<h2 class="p3-help-question">How does my site load the plugin?</h2>
 	<blockquote>
-		The plugin should be active at the earliest point in the code execution. The plugin can be loaded through an
-		auto_prepend_file configuration directive from a .htaccess file or a <a href="http://php.net/manual/en/configuration.file.per-user.php"
-		target="_blank">.user.ini</a> file, but be careful. The .user.ini files are cached, so you must remove the entry from your
-		.user.ini file before you remove this plugin.
-		<br /><br />
 		This plugin automatically creates a <a href="http://codex.wordpress.org/Must_Use_Plugins" target="_blank">must-use</a>
 		plugin to load before other plugins.  If that doesn't work, it runs like a regular plugin.
 		<br /><br />
