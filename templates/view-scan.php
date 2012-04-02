@@ -169,7 +169,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 			<?php foreach ( $this->profile->plugin_times as $k => $v ) { ?>
 				{
 					label: "<?php echo esc_js( $k ); ?>",
-					data: <?php echo $v; ?>
+					data: <?php echo json_encode( $v ); ?>
 				},
 			<?php } ?>
 		<?php } else { ?>
@@ -224,7 +224,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 			<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
 				[
 					<?php echo $k + 1; ?>,
-					<?php echo $v['core']; ?>
+					<?php echo json_encode( $v['core'] ); ?>
 				],
 			<?php } ?>
 			]
@@ -235,7 +235,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 			<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
 				[
 					<?php echo $k + 1; ?>,
-					<?php echo $v['theme']; ?>
+					<?php echo json_encode( $v['theme'] ); ?>
 				],
 			<?php } ?>
 			]
@@ -246,7 +246,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 			<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
 				[
 					<?php echo $k + 1; ?>,
-					<?php echo $v['plugins']; ?>
+					<?php echo json_encode( $v['plugins'] ); ?>
 				],
 			<?php } ?>
 			]
@@ -331,7 +331,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 				<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
 					[
 						<?php echo $k + 1; ?>,
-						<?php echo $v['queries']; ?>
+						<?php echo json_encode( $v['queries'] ); ?>
 					],
 				<?php } ?>
 			<?php } ?>
@@ -420,18 +420,18 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 				<?php for ( $i = -999 ; $i < 999 + 2; $i++ ) { ?>
 					[
 						<?php echo $i; ?>,
-						<?php echo $this->profile->averages['site']; ?>
+						<?php echo json_encode( $this->profile->averages['site'] ); ?>
 					],
 				<?php } ?>
 			]
 		},
 		{
 			label: 'WP Core Time',
-			data: [[0, <?php echo $this->profile->averages['core']; ?>]]
+			data: [[0, <?php echo json_encode( $this->profile->averages['core'] ); ?>]]
 		},
 		{
 			label: 'Theme',
-			data: [[1, <?php echo $this->profile->averages['theme']; ?>]]
+			data: [[1, <?php echo json_encode( $this->profile->averages['theme'] ); ?>]]
 		},
 		<?php $i = 2; $other = 0; ?>
 		<?php foreach ( $this->profile->plugin_times as $k => $v ) { ?>
@@ -439,7 +439,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 				label: '<?php echo esc_js( $k ); ?>',
 				data: [[
 					<?php echo $i++; ?>,
-					<?php echo $v; ?>
+					<?php echo json_encode( $v ); ?>
 				]],
 			},
 		<?php } ?>
@@ -530,7 +530,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 				<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
 					[
 						<?php echo $k + 1; ?>,
-						<?php echo $v['core']; ?>
+						<?php echo json_encode( $v['core'] ); ?>
 					],
 				<?php } ?>
 			<?php } ?>
@@ -543,7 +543,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 				<?php foreach ( array_values( $url_stats ) as $k => $v ) { ?>
 					[
 						<?php echo $k + 1; ?>,
-						<?php echo $v['theme']; ?>
+						<?php echo json_encode( $v['theme'] ); ?>
 					],
 				<?php } ?>
 			<?php } ?>
@@ -558,7 +558,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 						[
 							<?php echo $k + 1; ?>,
 							<?php if ( array_key_exists( $plugin, $v['breakdown'] ) ) : ?>
-								<?php echo $v['breakdown'][$plugin]; ?>
+								<?php echo json_encode( $v['breakdown'][$plugin] ); ?>
 							<?php else : ?>
 								0
 							<?php endif; ?>
