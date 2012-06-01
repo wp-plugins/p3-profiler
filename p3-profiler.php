@@ -62,6 +62,9 @@ if ( is_admin() && 'admin-ajax.php' == end( explode( '/', $_SERVER['PHP_SELF'] )
 		
 	// Show the 'Profiler' option under the 'Plugins' menu
 	add_action( 'admin_menu', array( 'P3_Profiler_Plugin', 'tools_menu' ) );
+	
+	// Show the 'Profile now' link on the plugins table
+	add_action( 'plugin_action_links', array( 'P3_Profiler_Plugin', 'add_settings_link'), 10, 2 );
 
 	if ( isset( $_REQUEST['page'] ) && P3_PLUGIN_SLUG == $_REQUEST['page'] ) {
 
