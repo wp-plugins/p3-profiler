@@ -68,6 +68,10 @@ This version addresses a path disclosure issue.  Users are encouraged to upgrade
 
 == Frequently Asked Questions ==
 
+= I installed P3, what now? =
+
+Open the **Tools** menu, then open **P3 Plugin Profiler** then click **Scan Now**.
+
 = What if I get a warning about usort()? =
 
 Warning messages like this: `Warning: usort() [function.usort]: Array was modified by the user comparison function` are due to a known php bug.  See [php bug #50688](https://bugs.php.net/bug.php?id=50688) for more information.  This warning does not affect the functionality of your site and it is not visible to your users.
