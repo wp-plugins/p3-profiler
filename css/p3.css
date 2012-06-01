@@ -4,6 +4,11 @@
 	margin-top: 10px;
 	padding: 4px;
 	cursor: default;
+	height: 30px;
+}
+#p3-navbar div:first-child {
+	float: left;
+	width: 400px;
 }
 
 
@@ -11,8 +16,8 @@
 #p3-scan-label {
 	float: right;
 	font-weight: bold;
-	margin-top: 7px;
-	margin-right: 12px;
+	margin-top: 8px;
+	margin-right: 14px;
 }
 
 
@@ -279,9 +284,9 @@ p3-glossary-container {
 	text-align: center;
 	position: absolute;
 	float: left;
-	margin-top: 45px;
-	margin-left: -158px;
-	width: 315px;
+	margin-top: 35px;
+	margin-left: -200px;
+	width: 400px;
 	left: 50%;
 }
 #p3-copyright img {

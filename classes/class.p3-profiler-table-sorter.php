@@ -9,7 +9,7 @@ if ( !defined('P3_PATH') )
  * @version 1.0
  * @package P3_Profiler
  */
-class P3_Profile_Table_Sorter {
+class P3_Profiler_Table_Sorter {
 
 	/**
 	 * The field name to sort by

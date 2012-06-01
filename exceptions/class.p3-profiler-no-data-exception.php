@@ -10,4 +10,4 @@ if ( !defined('P3_PATH') )
  * @version 1.0
  * @package P3_Profiler
  */
- class P3_Profile_No_Data_Exception extends Exception {}
+ class P3_Profiler_No_Data_Exception extends Exception {}

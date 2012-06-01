@@ -121,7 +121,7 @@ class P3_Profiler {
 
 		// Set up paths
 		$this->_P3_PATH      = realpath( dirname( __FILE__ ) );
-
+		
 		// Debug mode
 		$this->_debug_entry = array(
 			'profiling_enabled'  => false,
@@ -130,7 +130,7 @@ class P3_Profiler {
 			'recording'          => false,
 			'disable_optimizers' => false,
 			'url'                => $this->_get_url(),
-			'visitor_ip'         => $this->get_ip(),
+			'visitor_ip'         => p3_profiler_get_ip(),
 			'time'               => time(),
 			'pid'                => getmypid()
 		);
@@ -138,19 +138,19 @@ class P3_Profiler {
 		// Check to see if we should profile
 		$opts = array();
 		if ( function_exists( 'get_option') ) {
-			$opts = get_option('p3-profiler_profiling_enabled');
-			if ( !empty( $opts ) ) {
+			$opts = get_option('p3-profiler_options' );
+			if ( !empty( $opts['profiling_enabled'] ) ) {
 				if ( isset( $this->_debug_entry ) ) {
 					$this->_debug_entry['profiling_enabled']  = true;
-					$this->_debug_entry['scan_name']          = $opts['name'];
-					$this->_debug_entry['recording_ip']       = $opts['ip'];
-					$this->_debug_entry['disable_optimizers'] = $opts['disable_opcode_cache'];
+					$this->_debug_entry['scan_name']          = $opts['profiling_enabled']['name'];
+					$this->_debug_entry['recording_ip']       = $opts['profiling_enabled']['ip'];
+					$this->_debug_entry['disable_optimizers'] = $opts['profiling_enabled']['disable_opcode_cache'];
 				}
 			}
 		}
 		
 		// Add a global flag to let everyone know we're profiling
-		if ( !empty( $opts ) && preg_match( '/' . $opts['ip'] . '/', $this->get_ip() ) ) {
+		if ( !empty( $opts ) && preg_match( '/' . $opts['profiling_enabled']['ip'] . '/', p3_profiler_get_ip() ) ) {
 			define( 'WPP_PROFILING_STARTED', true );
 		}
 
@@ -162,12 +162,31 @@ class P3_Profiler {
 			return $this;
 		}
 		
+		// Emergency shut off switch
+		if ( isset( $_REQUEST['P3_SHUTOFF'] ) && !empty( $_REQUEST['P3_SHUTOFF'] ) ) {
+			p3_profiler_disable();
+			return $this;
+		}
+		
+		// Error detection
+		$flag = get_transient( 'p3_profiler-error_detection' );
+		if ( !empty( $flag ) ) {
+			p3_profiler_disable();
+			delete_transient( 'p3_profiler-error_detection' );
+			return $this;
+		}
+
 		// Kludge memory limit / time limit
-		@ini_set( 'memory_limit', '128M' );
+		if ( (int) @ini_get( 'memory_limit' ) < 256 ) {
+			@ini_set( 'memory_limit', '256M' );
+		}
 		@set_time_limit( 90 );
 		
+		// Set the error detection flag
+		set_transient( 'p3_profiler-error_detection', time() );
+		
 		// Set the profile file
-		$this->_profile_filename = $opts['name'] . '.json';
+		$this->_profile_filename = $opts['profiling_enabled']['name'] . '.json';
 
 		// Start timing
 		$this->_start_time      = microtime( true );
@@ -185,7 +204,7 @@ class P3_Profiler {
 		// Add some startup information
 		$this->_profile = array(
 			'url'   => $this->_get_url(),
-			'ip'    => $this->get_ip(),
+			'ip'    => p3_profiler_get_ip(),
 			'pid'   => getmypid(),
 			'date'  => @date( 'c' ),
 			'stack' => array()
@@ -193,7 +212,7 @@ class P3_Profiler {
 
 		// Disable opcode optimizers.  These "optimize" calls out of the stack
 		// and hide calls from the tick handler and backtraces
-		if ( $opts['disable_opcode_cache'] ) {
+		if ( $opts['profiling_enabled']['disable_opcode_cache'] ) {
 			if ( extension_loaded( 'xcache' ) ) {
 				@ini_set( 'xcache.optimizer', false ); // Will be implemented in 2.0, here for future proofing
 				// XCache seems to do some optimizing, anyway.  The recorded stack size is smaller with xcache.cacher enabled than without.
@@ -485,8 +504,21 @@ class P3_Profiler {
 	 */
 	public function shutdown_handler() {
 
+		// Detect fatal errors (e.g. out of memory errors)
+		$error = error_get_last();
+		if ( empty( $error ) || E_ERROR !== $error['type'] ) {
+			delete_transient( 'p3_profiler-error_detection' );
+		} else {
+			set_transient( 'p3_notices', array( array(
+				'msg'   => sprintf( __( 'A fatal error occurred during profiling: %s in file %s on line %d ', 'p3-profiler' ), $error['message'], $error['file'], $error['line'] ),
+				'error' => true,
+			) ) );
+		}
+		unset( $error );
+
 		// Write debug log
-		if ( get_option( 'p3-profiler_debug' ) ) {
+		$opts = get_option('p3-profiler_options' );
+		if ( !empty( $opts['debug'] ) ) {
 			$this->_write_debug_log();
 		}
 
@@ -585,11 +617,10 @@ class P3_Profiler {
 		// Throw away unneeded information to make the profiles smaller
 		unset( $this->_profile['stack'] );
 
-		// Open the file and acquire an exclusive lock ( prevent multiple hits from stomping on our
-		// previous profiles
+		// Write the profile file
 		$uploads_dir = wp_upload_dir();
 		$path        = $uploads_dir['basedir'] . DIRECTORY_SEPARATOR . 'profiles' . DIRECTORY_SEPARATOR . $this->_profile_filename;
-		file_put_contents( $path, json_encode( $this->_profile ) . PHP_EOL, FILE_APPEND );
+		file_put_contents( $path, json_encode( $this->_profile ) . PHP_EOL, FILE_APPEND );		
 	}
 	
 	/**
@@ -601,55 +632,10 @@ class P3_Profiler {
 		if ( !empty( $url ) ) {
 			return $url;
 		}
-		$protocol = 'http://';
-		if ( ( !empty( $_SERVER['HTTPS'] ) && 'on' == strtolower( $_SERVER['HTTPS'] ) ) || 443 == $_SERVER['SERVER_PORT'] ) {
-			$protocol = 'https://';
-		}
-		$domain = $_SERVER['HTTP_HOST'];
-		if ( !empty( $_SERVER['REQUEST_URI'] ) ) {
-			$file         = '';
-			$query_string = '';
-			$path         = preg_replace( '/[?&]P3_NOCACHE=[a-zA-Z0-9]+/', '', $_SERVER['REQUEST_URI'] );
-		} else {
-			$file = '';
-			if ( !empty( $_SERVER['SCRIPT_NAME'] ) ) {
-				$file = $_SERVER['SCRIPT_NAME'];
-			}
-			$path = '';
-			if ( !empty( $_SERVER['PATH_INFO'] ) ) {
-				$path = $_SERVER['PATH_INFO'];
-			} elseif ( !empty( $_SERVER['REDIRECT_URL'] ) ) {
-				$path = $_SERVER['REDIRECT_URL'];
-			}
-			$query_string = '';
-			if ( !empty( $_SERVER['QUERY_STRING'] ) ) {
-				$query_string = '?' . preg_replace( '/[?&]P3_NOCACHE=[a-zA-Z0-9]+/', '', $_SERVER['QUERY_STRING'] );
-			}
-		}
-		$url = $protocol.$domain.$file.$path.$query_string;
+		$url = remove_query_arg( 'P3_NOCACHE', $_SERVER['REQUEST_URI'] );
 		return $url;
 	}
-	
-	/**
-	 * Get the user's IP
-	 * @return string
-	 */
-	public function get_ip() {
-		static $ip = '';
-		if ( !empty( $ip ) ) {
-			return $ip;
-		} else {
-			if ( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-				$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-			} elseif ( !empty ( $_SERVER['HTTP_X_REAL_IP'] ) ) {
-				$ip = $_SERVER['HTTP_X_REAL_IP'];
-			} else {
-				$ip = $_SERVER['REMOTE_ADDR'];
-			}
-			return $ip;
-		}
-	}
-	
+
 	/**
 	 * Disable debug mode
 	 */
@@ -665,7 +651,9 @@ class P3_Profiler {
 		array_unshift( $debug_log, $this->_debug_entry );
 		if ( count( $debug_log ) >= 100 ) {
 			$debug_log = array_slice( $debug_log, 0, 100 );
-			update_option( 'p3-profiler_debug', false );
+			$opts = get_option( 'p3-profiler_options' );
+			$opts['debug'] = false;
+			update_option( 'p3-profiler_options', $opts );
 		}
 
 		// Write the log

@@ -3,9 +3,9 @@
 $button_current_checked = '';
 $button_history_checked = '';
 $button_help_checked    = '';
-if ( 'current-scan' == $this->action || !empty( $_REQUEST['current_scan'] ) ) {
+if ( 'current-scan' == self::$action || !empty( $_REQUEST['current_scan'] ) ) {
 	$button_current_checked = 'checked="checked"';
-} elseif ( 'help' == $this->action ) {
+} elseif ( 'help' == self::$action ) {
 	$button_help_checked = 'checked="checked"';
 } else {
 	$button_history_checked = 'checked="checked"';
@@ -59,19 +59,21 @@ if ( 'current-scan' == $this->action || !empty( $_REQUEST['current_scan'] ) ) {
 
 	<!-- Header icon / title -->
 	<div id="icon-plugins" class="icon32"><br/></div>
-	<h2>P3 - Plugin Performance Profiler</h2>
+	<h2><?php _e( 'P3 - Plugin Performance Profiler', 'p3-profiler' ); ?></h2>
 
 	<!-- Header navbar -->
 	<div class="ui-widget-header" id="p3-navbar">
-		<input type="radio" name="p3-nav" id="button-current-scan" <?php echo $button_current_checked; ?> />
-		<label for="button-current-scan">Current</label>
-		<input type="radio" name="p3-nav" id="button-history-scans" <?php echo $button_history_checked; ?> />
-		<label for="button-history-scans">History</label>
-		<input type="radio" name="p3-nav" id="button-help" <?php echo $button_help_checked; ?> /><label for="button-help">Help</label>
+		<div>
+			<input type="radio" name="p3-nav" id="button-current-scan" <?php echo $button_current_checked; ?> />
+			<label for="button-current-scan"><?php _e( 'Current', 'p3-profiler' ); ?></label>
+			<input type="radio" name="p3-nav" id="button-history-scans" <?php echo $button_history_checked; ?> />
+			<label for="button-history-scans"><?php _e( 'History', 'p3-profiler' ); ?></label>
+			<input type="radio" name="p3-nav" id="button-help" <?php echo $button_help_checked; ?> /><label for="button-help"><?php _e( 'Help', 'p3-profiler' ); ?></label>
+		</div>
 		
 		<div id="p3-scan-label">
-			<?php if ( !empty( $this->profile ) ) : ?>
-				Scan name: <?php echo $this->profile->profile_name; ?>
+			<?php if ( !empty( self::$profile ) ) : ?>
+				<?php _e( 'Scan name:', 'p3-profiler' ); ?> <?php echo self::$profile->profile_name; ?>
 			<?php endif; ?>
 		</div>
 	</div>
@@ -80,28 +82,28 @@ if ( 'current-scan' == $this->action || !empty( $_REQUEST['current_scan'] ) ) {
 	<?php require_once P3_PATH . '/templates/callouts.php'; ?>
 
 	<!-- View scan or show a list of scans -->
-	<?php if ( ( 'current-scan' == $this->action && !empty( $this->scan ) ) || 'view-scan' == $this->action ) { ?>
-		<?php include_once P3_PATH . '/templates/view-scan.php'; ?>
-	<?php } elseif ( 'help' == $this->action ) { ?>
-		<?php include_once P3_PATH . '/templates/help.php'; ?>
+	<?php if ( ( 'current-scan' == self::$action && !empty( self::$scan ) ) || 'view-scan' == self::$action ) { ?>
+		<?php require_once P3_PATH . '/templates/view-scan.php'; ?>
+	<?php } elseif ( 'help' == self::$action ) { ?>
+		<?php require_once P3_PATH . '/templates/help.php'; ?>
 	<?php } else { ?>
-		<?php include_once P3_PATH . '/templates/list-scans.php'; ?>
+		<?php require_once P3_PATH . '/templates/list-scans.php'; ?>
 	<?php } ?>
 
 </div>
 
 <div id="p3-reminder">
 	<div id="p3-reminder-wrapper">
-		Do you like this plugin?
+		<?php _e( 'Do you like this plugin?', 'p3-profiler' ); ?>
 		<ul>
-			<li><a href="http://twitter.com/home?status=<?php echo rawurlencode(htmlentities('I just optimized my WordPress site with #p3plugin http://wordpress.org/extend/plugins/p3-profiler/ ')); ?>" target="_blank">Tweet</a> about it</li>
-			<li><a href="http://wordpress.org/extend/plugins/p3-profiler/" target="_blank">Rate</a> it on the repository</li>
+			<li><a href="http://twitter.com/home?status=<?php echo rawurlencode( htmlentities( sprintf( __( 'I just optimized my WordPress site with %1$s %2$s', 'p3-profiler' ), '#p3plugin', 'http://wordpress.org/extend/plugins/p3-profiler/') ) ); ?>" target="_blank"><?php _e( 'Tweet about it', 'p3-profiler' ); ?></a></li>
+			<li><a href="http://wordpress.org/extend/plugins/p3-profiler/" target="_blank"><?php _e( 'Rate it on the repository', 'p3-profiler' ); ?></a></li>
 		</ul>
 	</div>
 </div>
 
 <div id="p3-copyright">
-	<img src="<?php echo plugins_url() . '/p3-profiler/logo.gif'; ?>" alt="GoDaddy.com logo" title="GoDaddy.com logo" />
+	<img src="<?php echo plugins_url() . '/p3-profiler/css/logo.gif'; ?>" alt="<?php esc_attr_e( 'Logo', 'p3-profiler' ); ?>" title="<?php esc_attr_e( 'Logo', 'p3-profiler' ); ?>" />
 	<br />
-	Copyright &copy; 2011-<?php echo date('Y'); ?> <a href="http://www.godaddy.com/" target="_blank">GoDaddy.com</a>.  All rights reserved.
+	<?php printf( __( 'P3 (Plugin Performance Profiler) is Copyright &copy; %1$s - %2$s <a href="%3$s" target="_blank">GoDaddy.com</a>.  All rights reserved.', 'p3-profiler' ), 2011, date( 'Y' ), 'http://www.godaddy.com/' ); ?>
 </div>

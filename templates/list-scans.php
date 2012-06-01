@@ -5,7 +5,7 @@ if ( !defined('P3_PATH') )
 <form id="scans-filter" method="post">
 	<input type="hidden" name="page" value="<?php echo sanitize_text_field( $_REQUEST ['page'] ); ?>" />
 	<?php echo wp_nonce_field( 'delete_scans', 'p3_nonce' ); ?>
-	<?php $this->scan_table->display(); ?>
+	<?php self::$scan_table->display(); ?>
 </form>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
@@ -13,7 +13,7 @@ if ( !defined('P3_PATH') )
 			if (0 == $("input:checked", $("#scans-filter")).length) {
 				evt.stopPropagation();
 				evt.preventDefault();					
-			} else if (!confirm('Are you sure you want to delete these scans?')) {
+			} else if (!confirm( '<?php _e( 'Are you sure you want to delete these scans?', 'p3-profiler' ); ?>' )) {
 				evt.stopPropagation();
 				evt.preventDefault();
 			} else {
@@ -21,7 +21,7 @@ if ( !defined('P3_PATH') )
 			}
 		});
 		$("a.delete-scan").click(function(evt) {
-			if (confirm('Are you sure you want to delete this scan?')) {
+			if (confirm( '<?php _e( 'Are you sure you want to delete this scan?', 'p3-profiler' ); ?>' )) {
 
 				// De-select the checkboxes
 				$("#scans-filter input:checked").prop("checked", false);

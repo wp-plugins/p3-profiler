@@ -9,7 +9,7 @@ if ( !defined('P3_PATH') )
  * @version 1.0
  * @package P3_Profiler
  */
- class P3_Profile_Reader {
+ class P3_Profiler_Reader {
 
 	/**
 	 * Total site load time (profile + theme + core + plugins)
@@ -145,14 +145,14 @@ if ( !defined('P3_PATH') )
 	/**
 	 * Constructor
 	 * @param string $file Full path to the profile json file
-	 * @return P3_Profile_Reader
+	 * @return P3_Profiler_Reader
 	 */
 	public function __construct( $file ) {
 
 		// Open the file
 		$fp = fopen( $file, 'r' );
 		if ( FALSE === $fp ) {
-			throw new Exception( 'Cannot open ' . $file );
+			throw new Exception( __( 'Cannot open file: ', 'p3-profiler' ) . $file );
 		}
 		
 		// Decode each line.  Each line is a separate json object.  Whenever a
@@ -164,7 +164,7 @@ if ( !defined('P3_PATH') )
 			}
 			$tmp = json_decode( $line );
 			if ( null === $tmp ) {
-				throw new Exception( 'Cannot parse ' . $file );
+				throw new Exception( __( 'Cannot parse file: ', 'p3-profiler' ) . $file );
 				fclose( $fp );
 			}
 			$this->_data[] = $tmp;
@@ -188,7 +188,7 @@ if ( !defined('P3_PATH') )
 
 		// Check for empty data
 		if ( empty( $this->_data ) ) {
-			throw new P3_Profile_No_Data_Exception('No visits recorded during this profiling session.');
+			throw new P3_Profiler_No_Data_Exception( __( 'No visits recorded during this profiling session.', 'p3-profiler' ) );
 		}
 		
 		foreach ( $this->_data as $o ) {
@@ -335,7 +335,10 @@ if ( !defined('P3_PATH') )
 	 * @return string
 	 */
 	private function _get_theme_name( $theme ) {
-		if ( function_exists( 'get_theme_data' ) && file_exists( WP_CONTENT_DIR . '/themes/' . $theme . '/style.css' ) ) {
+		if ( function_exists( 'wp_get_theme') ) {
+			$theme_info = wp_get_theme( $theme );
+			return $theme_info->get('Name');
+		} elseif ( function_exists( 'get_theme_data' ) && file_exists( WP_CONTENT_DIR . '/themes/' . $theme . '/style.css' ) ) {
 			$theme_info = get_theme_data( WP_CONTENT_DIR . '/themes/' . $theme . '/style.css' );
 			if ( !empty( $theme_info ) && !empty( $theme_info['Name'] ) ) {
 				return $theme_info['Name'];
