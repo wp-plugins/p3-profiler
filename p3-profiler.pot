@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the P3 (Plugin Performance Profiler) package.
 msgid ""
 msgstr ""
-"Project-Id-Version: P3 (Plugin Performance Profiler) 1.3.0\n"
+"Project-Id-Version: P3 (Plugin Performance Profiler) 1.3.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/p3-profiler\n"
-"POT-Creation-Date: 2012-05-26 00:32:52+00:00\n"
+"POT-Creation-Date: 2012-06-02 07:23:59+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,131 +12,133 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: classes/class.p3-profiler-plugin-admin.php:74
-#: classes/class.p3-profiler-plugin-admin.php:75
-#: classes/class.p3-profiler-plugin.php:16
-#: classes/class.p3-profiler-plugin.php:17
-msgid "P3 Plugin Profiler"
-msgstr ""
-
-#: classes/class.p3-profiler-plugin-admin.php:135
+#: classes/class.p3-profiler-plugin-admin.php:122
 msgid "Scan does not exist"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:161
+#: classes/class.p3-profiler-plugin-admin.php:148
 msgid ""
 "No visits recorded during this profiling session.  Check the <a href=\"%s"
 "\">help</a> page for more information"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:169
+#: classes/class.p3-profiler-plugin-admin.php:156
 msgid "Error reading scan"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:177
+#: classes/class.p3-profiler-plugin-admin.php:164
 msgid "Click \"Start Scan\" to run a performance scan of your website."
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:272
-#: classes/class.p3-profiler-plugin-admin.php:310
-#: classes/class.p3-profiler-plugin-admin.php:339
-#: classes/class.p3-profiler-plugin-admin.php:374
-#: classes/class.p3-profiler-plugin-admin.php:419
-#: classes/class.p3-profiler-plugin-admin.php:430
+#: classes/class.p3-profiler-plugin-admin.php:259
+#: classes/class.p3-profiler-plugin-admin.php:297
+#: classes/class.p3-profiler-plugin-admin.php:326
+#: classes/class.p3-profiler-plugin-admin.php:361
+#: classes/class.p3-profiler-plugin-admin.php:406
+#: classes/class.p3-profiler-plugin-admin.php:417
 #: classes/class.p3-profiler-table.php:210
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:321
+#: classes/class.p3-profiler-plugin-admin.php:308
 msgid "Turned off performance scanning."
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:394
-#: classes/class.p3-profiler-plugin-admin.php:397
+#: classes/class.p3-profiler-plugin-admin.php:381
+#: classes/class.p3-profiler-plugin-admin.php:384
 msgid "Invalid subject"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:401
+#: classes/class.p3-profiler-plugin-admin.php:388
 msgid "<a href=\"%s\" target=\"_blank\">wp_mail()</a> function returned false"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:447 templates/help.php:366
+#: classes/class.p3-profiler-plugin-admin.php:434 templates/help.php:366
 #: templates/help.php:406
 msgid "Profiling Enabled"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:448 templates/help.php:367
+#: classes/class.p3-profiler-plugin-admin.php:435 templates/help.php:367
 #: templates/help.php:407
 msgid "Recording IP"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:449 templates/callouts.php:257
+#: classes/class.p3-profiler-plugin-admin.php:436 templates/callouts.php:257
 #: templates/help.php:368 templates/help.php:408
 msgid "Scan Name"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:450 templates/help.php:369
+#: classes/class.p3-profiler-plugin-admin.php:437 templates/help.php:369
 #: templates/help.php:409
 msgid "Recording"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:451 templates/help.php:370
+#: classes/class.p3-profiler-plugin-admin.php:438 templates/help.php:370
 #: templates/help.php:410
 msgid "Disable Optimizers"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:452 templates/help.php:371
+#: classes/class.p3-profiler-plugin-admin.php:439 templates/help.php:371
 #: templates/help.php:411
 msgid "URL"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:453 templates/help.php:372
+#: classes/class.p3-profiler-plugin-admin.php:440 templates/help.php:372
 #: templates/help.php:412
 msgid "Visitor IP"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:454 templates/help.php:373
+#: classes/class.p3-profiler-plugin-admin.php:441 templates/help.php:373
 #: templates/help.php:413
 msgid "Time"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:455 templates/help.php:374
+#: classes/class.p3-profiler-plugin-admin.php:442 templates/help.php:374
 #: templates/help.php:414
 msgctxt "Abbreviation for process id"
 msgid "PID"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:490
+#: classes/class.p3-profiler-plugin-admin.php:477
 msgid "Cannot read profiles directory"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:552
+#: classes/class.p3-profiler-plugin-admin.php:539
 msgid "Performance scanning is enabled."
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:606
+#: classes/class.p3-profiler-plugin-admin.php:593
 msgctxt "Abbreviation for bytes"
 msgid "B"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:607
+#: classes/class.p3-profiler-plugin-admin.php:594
 msgctxt "Abbreviation for kilobytes"
 msgid "KB"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:608 templates/view-scan.php:959
+#: classes/class.p3-profiler-plugin-admin.php:595 templates/view-scan.php:959
 msgctxt "Abbreviation for megabytes"
 msgid "MB"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:609
+#: classes/class.p3-profiler-plugin-admin.php:596
 msgctxt "Abbreviation for gigabytes"
 msgid "GB"
 msgstr ""
 
-#: classes/class.p3-profiler-plugin-admin.php:610
+#: classes/class.p3-profiler-plugin-admin.php:597
 msgctxt "Abbreviation for terabytes"
 msgid "TB"
+msgstr ""
+
+#: classes/class.p3-profiler-plugin.php:16
+#: classes/class.p3-profiler-plugin.php:17
+msgid "P3 Plugin Profiler"
+msgstr ""
+
+#: classes/class.p3-profiler-plugin.php:32
+msgid "Scan Now"
 msgstr ""
 
 #: classes/class.p3-profiler-reader.php:155
