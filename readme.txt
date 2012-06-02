@@ -114,6 +114,9 @@ P3 is available on the Tools menu for each site in the network.
 
 == Changelog ==
 
+= 1.3.1 =
+ * Fixed an error when upgrading to 1.3.x from 1.1.x and skipping the 1.2.x upgrade.
+
 = 1.3.0 =
  * Internationalized P3
  * Compatibility with WordPress 3.4.0
