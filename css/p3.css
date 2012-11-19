@@ -25,7 +25,7 @@
 #p3-scan-form-wrapper {
 	cursor: default;
 	padding: 10px;
-	width: 170px;
+	width: 185px;
 	height: 80px;
 	text-align: center;
 	margin-top: 10px;
@@ -43,7 +43,8 @@
 .p3-big-button label span {
 	font-size: 110%;
 	font-weight: bold;
-	width: 110px;
+	width: auto;
+	min-width: 110px;
 	margin: 2px;
 }
 
@@ -333,14 +334,16 @@ div.p3-x-axis-label {
 
 
 /** Email these results button **/
-#p3-email-results {
-	margin: 20px auto 30px auto;
+div.wrap #p3-email-results-container {
+	width: 100%;
+	text-align: center;
+	margin-bottom: 15px;
 }
-#p3-email-results a {
-	display: inline-block;
-	position: relative;
-	top: 1px;
-	left: 4px;
+#p3-email-results {
+	margin: auto;
+	line-height: 37px;
+	height: 40px;
+	width: 155px;
 }
 #p3-email-sending-dialog img {
 	left: 132px;

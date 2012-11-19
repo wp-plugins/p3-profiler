@@ -37,13 +37,6 @@ class P3_Profiler_Plugin {
 	}
 
 	/**
-	 * Load the language file
-	 */
-	public static function load_language() {
-		load_plugin_textdomain( 'p3-profiler', false, plugin_basename( P3_PATH ) . '/languages/' );
-	}
-
-	/**
 	 * Activation hook
 	 * Install the profiler loader as a mu-plugin
 	 */

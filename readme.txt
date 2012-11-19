@@ -2,8 +2,8 @@
 Contributors: Godaddy, StarfieldTech
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
-Tested up to: 3.4
-Stable tag: 1.3.1
+Tested up to: 3.5
+Stable tag: 1.3.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,9 @@ Manual installation:
 4. Then activate the Plugin from Plugins page.
 
 == Upgrade Notice ==
+
+= 1.3.2 =
+Added 3.5 compatibility and refreshed UI colors.
 
 = 1.3.1 =
 Fixed an error when upgrading to 1.3.x from 1.1.x and skipping the 1.2.x upgrade.
@@ -113,6 +116,12 @@ Please check your media settings.  This is in Settings -> Media -> Store uploads
 P3 is available on the Tools menu for each site in the network.
 
 == Changelog ==
+
+= 1.3.2 =
+ * Added a Turkish translation.  Thanks to Hakaner!  http://hakanertr.wordpress.com/
+ * Updated some UI elements to allow for longer text strings for translations
+ * Refreshed UI to be 3.5.x compatible and use standard admin coloring
+ * Added a 'p3_automatic_scan_urls' filter
 
 = 1.3.1 =
  * Fixed an error when upgrading to 1.3.x from 1.1.x and skipping the 1.2.x upgrade.
