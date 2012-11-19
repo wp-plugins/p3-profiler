@@ -3,7 +3,7 @@ Contributors: Godaddy, StarfieldTech
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 3.5
-Stable tag: 1.3.2
+Stable tag: 1.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,7 +45,7 @@ Manual installation:
 
 == Upgrade Notice ==
 
-= 1.3.2 =
+= 1.4 =
 Added 3.5 compatibility and refreshed UI colors.
 
 = 1.3.1 =
@@ -117,7 +117,7 @@ P3 is available on the Tools menu for each site in the network.
 
 == Changelog ==
 
-= 1.3.2 =
+= 1.4 =
  * Added a Turkish translation.  Thanks to Hakaner!  http://hakanertr.wordpress.com/
  * Updated some UI elements to allow for longer text strings for translations
  * Refreshed UI to be 3.5.x compatible and use standard admin coloring
