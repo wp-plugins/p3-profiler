@@ -6,6 +6,8 @@ Description: See which plugins are slowing down your site.  Create a profile of 
 Author: GoDaddy.com
 Version: 1.4
 Author URI: http://www.godaddy.com/
+Text Domain: p3-profiler
+Domain Path: /languages
 */
 
 // Make sure it's wordpress
