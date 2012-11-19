@@ -680,7 +680,7 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 			e.preventDefault();
 			chart_<?php echo $component_runtime_chart_id; ?>.zoom();
 		});
-		$( '<div class="button" style="float: left; position: relative; left: 460px; top: -290px;"><input type="checkbox" checked="checked" style="padding: 0; margin: 0; width: 15px;" /></div>' )
+		$( '<div class="button" style="float: left; position: relative; left: 460px; top: -290px; padding-left: 6px; padding-right: 6px;"><input type="checkbox" checked="checked" style="padding: 0; margin: 0; width: 15px;" /></div>' )
 			.appendTo( $( "#p3-holder_<?php echo $component_runtime_chart_id; ?>" ).parent() ).click( function ( e ) {
 			e.preventDefault();
 			$( "#p3-detailed-series-toggle" ).dialog( "open" );
@@ -974,10 +974,14 @@ $component_runtime_chart_id   = substr( md5( uniqid() ), -8 );
 	</div>
 
 	<!-- Email these results -->
-	<div class="button" id="p3-email-results" style="width: 155px; padding: 5px;">
-		<img src="<?php echo plugins_url(); ?>/p3-profiler/css/icon_mail.gif" height="22" width="22" align="center"
-			alt="<?php esc_attr_e( 'Email these results', 'p3-profiler' ); ?>" title="<?php esc_attr_e( 'Email these results', 'p3-profiler' ); ?>" />
-		<a href="javascript:;"><?php _e ( 'Email these results', 'p3-profiler' ); ?></a>
+	<div id="p3-email-results-container">
+		<div class="button" id="p3-email-results">
+			<div>
+			<img src="<?php echo plugins_url(); ?>/p3-profiler/css/icon_mail.gif" height="22" width="22" align="center"
+				alt="<?php esc_attr_e( 'Email these results', 'p3-profiler' ); ?>" title="<?php esc_attr_e( 'Email these results', 'p3-profiler' ); ?>" />
+			<a href="javascript:;"><?php _e ( 'Email these results', 'p3-profiler' ); ?></a>
+			</div>
+		</div>
 	</div>
 	
 	<!-- Email results dialog -->

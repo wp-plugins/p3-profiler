@@ -85,7 +85,12 @@ class P3_Profiler_Plugin_Admin {
 	 * Load styles
 	 */
 	public static function load_styles() {
-		wp_enqueue_style( 'p3_jquery_ui_css', plugins_url() . '/p3-profiler/css/custom-theme/jquery-ui-1.8.16.custom.css' );
+		wp_enqueue_style ( 'jquery-ui-demo', plugins_url() . '/p3-profiler/css/jquery-ui.css' );
+		if ( 'classic' == get_user_option( 'admin_color' ) ) {
+			wp_enqueue_style ( 'jquery-ui-css', plugins_url() . '/p3-profiler/css/jquery-ui-classic.css' );
+		} else {
+			wp_enqueue_style ( 'jquery-ui-css', plugins_url() . '/p3-profiler/css/jquery-ui-fresh.css' );
+		}
 		wp_enqueue_style( 'p3_qtip_css', plugins_url() . '/p3-profiler/css/jquery.qtip.min.css' );
 		wp_enqueue_style( 'p3_css', plugins_url() . '/p3-profiler/css/p3.css' );
 	}
@@ -229,7 +234,7 @@ class P3_Profiler_Plugin_Admin {
 		}
 
 		// Done
-		return $pages;
+		return apply_filters( 'p3_automatic_scan_urls', $pages );
 	}
 
 	/**************************************************************/

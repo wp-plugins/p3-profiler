@@ -4,8 +4,10 @@ Plugin Name: P3 (Plugin Performance Profiler)
 Plugin URI: http://support.godaddy.com/godaddy/wordpress-p3-plugin/
 Description: See which plugins are slowing down your site.  Create a profile of your WordPress site's plugins' performance by measuring their impact on your site's load time.
 Author: GoDaddy.com
-Version: 1.3.1
+Version: 1.4
 Author URI: http://www.godaddy.com/
+Text Domain: p3-profiler
+Domain Path: /languages
 */
 
 // Make sure it's wordpress
@@ -18,6 +20,7 @@ if ( !defined( 'ABSPATH') )
 
 // Shortcut for knowing our path
 define( 'P3_PATH',  realpath( dirname( __FILE__ ) ) );
+load_plugin_textdomain( 'p3-profiler', false, plugin_basename( P3_PATH ) . '/languages/' );
 
 // Plugin slug
 define( 'P3_PLUGIN_SLUG', 'p3-profiler' );
@@ -67,9 +70,6 @@ if ( is_admin() && 'admin-ajax.php' == end( explode( '/', $_SERVER['PHP_SELF'] )
 	add_action( 'plugin_action_links', array( 'P3_Profiler_Plugin', 'add_settings_link'), 10, 2 );
 
 	if ( isset( $_REQUEST['page'] ) && P3_PLUGIN_SLUG == $_REQUEST['page'] ) {
-
-		// Localization
-		add_action( 'admin_init', array( 'P3_Profiler_Plugin', 'load_language' ) );
 
 		// Pre-processing of actions
 		add_action( 'admin_init', array( 'P3_Profiler_Plugin_Admin', 'init' ) );

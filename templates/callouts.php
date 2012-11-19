@@ -198,7 +198,7 @@ $opts = get_option( 'p3-profiler_options' );
 			'resizable' : false,
 			'modal' : true,
 			'width' : 450,
-			'height' : 425,
+			'height' : 450,
 			'title' : "<?php _e( 'Advanced Settings', 'p3-profiler' ); ?>",
 			'buttons' :
 			[
@@ -252,8 +252,8 @@ $opts = get_option( 'p3-profiler_options' );
 			'draggable' : false,
 			'resizable' : false,
 			'modal' : true,
-			'width' : 425,
-			'height' : 180,
+			'width' : 500,
+			'height' : 175,
 			'title' : '<?php _e( 'Scan Name', 'p3-profiler' ); ?>'
 			// 'dialogClass' : 'noTitle'
 		});
@@ -266,7 +266,7 @@ $opts = get_option( 'p3-profiler_options' );
 			'resizable' : false,
 			'modal' : true,
 			'width' : 450,
-			'height' : 117,
+			'height' : 120,
 			'dialogClass' : 'noTitle'
 		});
 
@@ -474,7 +474,7 @@ $opts = get_option( 'p3-profiler_options' );
 				<?php if ( false !== ( $info = self::scan_enabled() ) ) { ?>
 					<!-- Stop scan button -->
 
-					<strong>IP:</strong><?php echo htmlentities( $info['ip'] ); ?>
+					<strong>IP:</strong> <?php echo htmlentities( $info['ip'] ); ?>
 					<div class="p3-big-button"><input type="checkbox" checked="checked" id="p3-stop-scan-submit" />
 					<label for="p3-stop-scan-submit"><?php _e( 'Stop Scan', 'p3-profiler' ); ?></label></div>
 					<?php echo htmlentities( $info['name'] ); ?>

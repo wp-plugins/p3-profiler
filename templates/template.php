@@ -96,7 +96,7 @@ if ( 'current-scan' == self::$action || !empty( $_REQUEST['current_scan'] ) ) {
 	<div id="p3-reminder-wrapper">
 		<?php _e( 'Do you like this plugin?', 'p3-profiler' ); ?>
 		<ul>
-			<li><a href="http://twitter.com/home?status=<?php echo rawurlencode( htmlentities( sprintf( __( 'I just optimized my WordPress site with %1$s %2$s', 'p3-profiler' ), '#p3plugin', 'http://wordpress.org/extend/plugins/p3-profiler/') ) ); ?>" target="_blank"><?php _e( 'Tweet about it', 'p3-profiler' ); ?></a></li>
+			<li><a href="http://twitter.com/home?status=<?php echo rawurlencode( sprintf( __( 'I just optimized my WordPress site with %1$s %2$s', 'p3-profiler' ), '#p3plugin', 'http://wordpress.org/extend/plugins/p3-profiler/') ); ?>" target="_blank"><?php _e( 'Tweet about it', 'p3-profiler' ); ?></a></li>
 			<li><a href="http://wordpress.org/extend/plugins/p3-profiler/" target="_blank"><?php _e( 'Rate it on the repository', 'p3-profiler' ); ?></a></li>
 		</ul>
 	</div>
