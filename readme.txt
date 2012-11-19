@@ -25,6 +25,8 @@ This plugin uses the canvas element for drawing charts and requires requires Fir
 7. Keep a history of your performance scans, compare your current performance with your previous performance.
 8. Full in-app help documentation
 9. Send a summary of your performance profile via e-mail.  If you want to show your developer, site admin, hosting support, or a plugin developer what's going on with your site, this is good way to start the conversation.
+10. Use the advanced settings to activate debug mode, control cache busting, or lock down profiling to a set of IP addresses.
+11. View the debug log on the help page to help troubleshoot if P3 isn't recording properly.
 
 == Installation ==
 Automatic installation
@@ -114,6 +116,21 @@ Please check your media settings.  This is in Settings -> Media -> Store uploads
 = How do I use P3 with multisite? =
 
 P3 is available on the Tools menu for each site in the network.
+
+= How can I change the list of pages scanned with auto-scan? =
+
+You can write a plugin to hook the `p3_automatic_scan_urls` filter.  Here's some sample code:
+
+<code>
+function my_p3_auto_scan_pages() {
+	return array(
+		'http://example.com/',
+		'http://example.com/some-cool-post',
+		'http://example.com/wp-admin/edit.php',
+	);
+}
+add_filter( 'p3_automatic_scan_urls', 'my_p3_auto_scan_pages' );
+</code>
 
 == Changelog ==
 
