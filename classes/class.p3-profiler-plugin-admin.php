@@ -85,7 +85,6 @@ class P3_Profiler_Plugin_Admin {
 	 * Load styles
 	 */
 	public static function load_styles() {
-		wp_enqueue_style ( 'jquery-ui-demo', plugins_url() . '/p3-profiler/css/jquery-ui.css' );
 		if ( 'classic' == get_user_option( 'admin_color' ) ) {
 			wp_enqueue_style ( 'jquery-ui-css', plugins_url() . '/p3-profiler/css/jquery-ui-classic.css' );
 		} else {
