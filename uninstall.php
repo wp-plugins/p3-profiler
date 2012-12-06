@@ -10,7 +10,6 @@ $profile_path = $uploads_dir['basedir'] . DIRECTORY_SEPARATOR . 'profiles';
 // Unhook the profiler
 update_option( 'p3-profiler_debug', false );
 update_option( 'p3-profiler_debug_log', array() );
-remove_action( 'shutdown', array( $p3_profiler, 'shutdown_handler' ) );
 
 // Delete the profiles folder
 if ( function_exists( 'is_multisite' ) && is_multisite() ) {
