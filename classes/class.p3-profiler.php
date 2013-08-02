@@ -281,7 +281,9 @@ class P3_Profiler {
 
 		// Examine the current stack, see if we should track it.  It should be
 		// related to a plugin file if we're going to track it
-		if ( version_compare( PHP_VERSION, '5.3.6' ) < 0 ) {
+		if ( version_compare( PHP_VERSION, '5.2.5' ) < 0 ) {
+			$bt = debug_backtrace();
+		} elseif ( version_compare( PHP_VERSION, '5.3.6' ) < 0 ) {
 			$bt = debug_backtrace( true );
 		} elseif ( version_compare( PHP_VERSION, '5.4.0' ) < 0 ) {
 			$bt = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT );
