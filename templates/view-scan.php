@@ -1062,7 +1062,7 @@ $plugin_list
 	<!-- Email sending dialog -->
 	<div id="p3-email-sending-dialog" class="p3-dialog">
 		<div id="p3-email-sending-loading">
-			<img src="<?php echo get_site_url() . '/wp-admin/images/loading.gif' ?>" height="16" width="16" title="<? esc_attr_e( 'Loading', 'p3-profiler' ); ?>" alt="<?php esc_attr_e( 'Loading', 'p3-profiler' ); ?>" />
+			<img src="<?php echo get_site_url() . '/wp-admin/images/loading.gif' ?>" height="16" width="16" title="<?php esc_attr_e( 'Loading', 'p3-profiler' ); ?>" alt="<?php esc_attr_e( 'Loading', 'p3-profiler' ); ?>" />
 		</div>
 		<div id="p3-email-sending-error">
 			<?php _e( 'There was a problem sending the e-mail:', 'p3-profiler' ); ?> <span id="p3-email-error"></span>
