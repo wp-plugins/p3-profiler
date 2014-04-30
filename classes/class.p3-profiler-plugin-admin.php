@@ -525,7 +525,7 @@ class P3_Profiler_Plugin_Admin {
 		);
 
 		// Save the stack
-		set_option( 'p3_notices', $notices );
+		update_option( 'p3_notices', $notices );
 	}
 
 	/**
@@ -540,7 +540,7 @@ class P3_Profiler_Plugin_Admin {
 				echo '<div class="' . ( ( $notice['error'] ) ? 'error' : 'updated' ) . '"><p>' . htmlentities( $notice['msg'] ) . '</p></div>';
 			}
 		}
-		set_option( 'p3_notices', array() );
+		update_option( 'p3_notices', array() );
 		if ( false !== self::scan_enabled() ) {
 			echo '<div class="updated"><p>' . __( 'Performance scanning is enabled.', 'p3-profiler' ) . '</p></div>';
 		}

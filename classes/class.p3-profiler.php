@@ -183,7 +183,7 @@ class P3_Profiler {
 		@set_time_limit( 90 );
 		
 		// Set the error detection flag
-		set_option( 'p3_profiler-error_detection', time() );
+		update_option( 'p3_profiler-error_detection', time() );
 		
 		// Set the profile file
 		$this->_profile_filename = $opts['profiling_enabled']['name'] . '.json';
@@ -509,7 +509,7 @@ class P3_Profiler {
 		if ( empty( $error ) || E_ERROR !== $error['type'] ) {
 			delete_option( 'p3_profiler-error_detection' );
 		} else {
-			set_option( 'p3_notices', array( array(
+			update_option( 'p3_notices', array( array(
 				'msg'   => sprintf( __( 'A fatal error occurred during profiling: %s in file %s on line %d ', 'p3-profiler' ), $error['message'], $error['file'], $error['line'] ),
 				'error' => true,
 			) ) );
@@ -623,7 +623,7 @@ class P3_Profiler {
 			$transient = '';
 		}
 		$transient  .= json_encode( $this->_profile ) . PHP_EOL;
-		set_option( 'p3_scan_' . $opts['profiling_enabled']['name'], $transient );
+		update_option( 'p3_scan_' . $opts['profiling_enabled']['name'], $transient );
 	}
 	
 	/**
