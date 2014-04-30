@@ -271,7 +271,7 @@ class P3_Profiler_Plugin_Admin {
 		$filename = sanitize_file_name( basename( $_POST['p3_scan_name'] ) );
 
 		// Add the entry ( multisite installs can run more than one concurrent profile )
-		delete_transient( 'p3_profiler-error_detection' );
+		delete_option( 'p3_profiler-error_detection' );
 		$opts = get_option( 'p3-profiler_options' );
 		$opts['profiling_enabled'] = array(
 			'ip'                   => stripslashes( $_POST['p3_ip'] ),
@@ -506,7 +506,6 @@ class P3_Profiler_Plugin_Admin {
 
 	/**
 	 * Add a notices
-	 * @uses transients
 	 * @param string $notice
 	 * @param bool $error Default false.  If true, this is a red error.  If false, this is a yellow notice.
 	 * @return void
@@ -514,7 +513,7 @@ class P3_Profiler_Plugin_Admin {
 	public static function add_notice( $notice, $error = false ) {
 
 		// Get any notices on the stack
-		$notices = get_transient( 'p3_notices' );
+		$notices = get_option( 'p3_notices' );
 		if ( empty( $notices ) ) {
 			$notices = array();
 		}
@@ -526,23 +525,22 @@ class P3_Profiler_Plugin_Admin {
 		);
 
 		// Save the stack
-		set_transient( 'p3_notices', $notices );
+		set_option( 'p3_notices', $notices );
 	}
 
 	/**
 	 * Display notices
-	 * @uses transients
 	 * @return voide
 	 */
 	public static function show_notices() {
-		$notices = get_transient( 'p3_notices' );
+		$notices = get_option( 'p3_notices' );
 		if ( !empty( $notices ) ) {
 			$notices = array_unique( $notices );
 			foreach ( $notices as $notice ) {
 				echo '<div class="' . ( ( $notice['error'] ) ? 'error' : 'updated' ) . '"><p>' . htmlentities( $notice['msg'] ) . '</p></div>';
 			}
 		}
-		set_transient( 'p3_notices', array() );
+		set_option( 'p3_notices', array() );
 		if ( false !== self::scan_enabled() ) {
 			echo '<div class="updated"><p>' . __( 'Performance scanning is enabled.', 'p3-profiler' ) . '</p></div>';
 		}
