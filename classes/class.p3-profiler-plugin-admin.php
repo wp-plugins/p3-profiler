@@ -689,9 +689,14 @@ class P3_Profiler_Plugin_Admin {
 			delete_option( 'p3-profiler_profiling_enabled' );
 		}
 
+		// Upgrading from < 1.5.0
+		if ( empty( $version) || version_compare( $version, '1.5.0' ) < 0 ) {
+			update_option( 'p3-profiler_version', '1.3.0' );
+		}
+
 		// Ensure the profiles folder is there
 		$uploads_dir = wp_upload_dir();
 		$folder      = $uploads_dir['basedir'] . DIRECTORY_SEPARATOR . 'profiles';
 		self::make_profiles_folder( $folder );
-	}
+	}	
 }
