@@ -1,5 +1,5 @@
 ﻿=== P3 (Plugin Performance Profiler) ===
-Contributors: Godaddy, StarfieldTech
+Contributors: Godaddy, StarfieldTech, kurtpayne
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 3.9
