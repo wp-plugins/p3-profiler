@@ -273,7 +273,7 @@ class P3_Profiler_Plugin_Admin {
 		// Add the entry ( multisite installs can run more than one concurrent profile )
 		delete_option( 'p3_profiler-error_detection' );
 		$opts = get_option( 'p3-profiler_options' );
-		if( empty( $options ) || !is_array( $opts ) ) {
+		if( empty( $opts ) || !is_array( $opts ) ) {
 			$opts = array();
 		}
 		$opts['profiling_enabled'] = array(
@@ -455,7 +455,7 @@ class P3_Profiler_Plugin_Admin {
 
 		foreach ( (array) $log as $entry ) {
 			printf('"%s","%s","%s","%s","%s","%s","%s","%s","%d"' . "\n",
-				$entry['profiling_enabled'] ? 'true' : 'false',
+				is_array( $entry['profiling_enabled']  ) ? 'true' : 'false',
 				$entry['recording_ip'],
 				$entry['scan_name'],
 				$entry['recording'] ? 'true' : 'false',
@@ -694,7 +694,7 @@ class P3_Profiler_Plugin_Admin {
 
 		// Upgrading from < 1.5.0
 		if ( empty( $version) || version_compare( $version, '1.5.0' ) < 0 ) {
-			update_option( 'p3-profiler_version', '1.3.0' );
+			update_option( 'p3-profiler_version', '1.5.0' );
 		}
 
 		// Ensure the profiles folder is there
