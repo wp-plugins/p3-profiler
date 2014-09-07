@@ -85,6 +85,10 @@ This version addresses a path disclosure issue.  Users are encouraged to upgrade
 
 == Frequently Asked Questions ==
 
+= Why are Jetpack and Yoast SEO slowing my site down so much? =
+
+They're really not.  P3 measures your site's performance while you're logged in.  This activates extra features on these plugins for administrators that will not be visible to your users.  The teams behind these plugins have put a lot of work on optimizing their plugins for performance and you should feel safe leaving these plugins installed and active.
+
 = I installed P3, what now? =
 
 Open the **Tools** menu, then open **P3 Plugin Profiler** then click **Scan Now**.
