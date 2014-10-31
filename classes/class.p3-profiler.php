@@ -288,8 +288,11 @@ class P3_Profiler {
 		static $is_536;
 
 		if ( $is_540 == null ) {
-			if ( $is_540 = version_compare( PHP_VERSION, '5.4.0', '>=' ) == false ) {
+			if ( version_compare( PHP_VERSION, '5.4.0', '>=' ) == false ) {
+				$is_540 = false;
 				$is_536 = version_compare( PHP_VERSION, '5.3.6', '>=' );
+			} else {
+				$is_540 = true;
 			}
 		}
 

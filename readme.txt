@@ -3,7 +3,7 @@ Contributors: Godaddy, StarfieldTech, kurtpayne, cklosows
 Tags: debug, debugging, developer, development, performance, plugin, profiler, speed
 Requires at least: 3.3
 Tested up to: 4.0
-Stable tag: 1.5.3
+Stable tag: 1.5.3.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,9 @@ Manual installation:
 4. Then activate the Plugin from Plugins page.
 
 == Upgrade Notice ==
+
+= 1.5.3.1 =
+Fixed logic bug in determining debug_backtrace arguements
 
 = 1.5.3 =
 Improved scanner performance (props askapache). Fixed a CSS conflict in overlays
@@ -148,6 +151,9 @@ add_filter( 'p3_automatic_scan_urls', 'my_p3_auto_scan_pages' );
 </code>
 
 == Changelog ==
+
+= 1.5.3.1 =
+* Fixed logic bug in determining debug_backtrace arguements
 
 = 1.5.3 =
 * Improved scanner performance (props askapache)
