@@ -47,7 +47,7 @@ Manual installation:
 
 == Upgrade Notice ==
 = 1.5.3.7
-Ensure HTML element names are distinct.
+Ensure HTML element names are distinct. Props mogulbuster
 
 = 1.5.3.6 =
 Internal version bump to ensure new CSS/JS isn't cached
@@ -169,7 +169,7 @@ add_filter( 'p3_automatic_scan_urls', 'my_p3_auto_scan_pages' );
 
 == Changelog ==
 = 1.5.3.7 =
-Ensure HTML element names are distinct.
+Ensure HTML element names are distinct. Props mogulbuster
 
 = 1.5.3.6 =
 Internal version bump to ensure new CSS/JS isn't cached
